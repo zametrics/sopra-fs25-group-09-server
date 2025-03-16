@@ -59,6 +59,7 @@ sonar {
     property "sonar.projectKey", "zametrics_sopra-fs25-group-09-server"
     property "sonar.organization", "zametrics"
     property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.login", "59d54abd187f7bcdaa7110e816a1c37caa97d620"
   }
 }
 
