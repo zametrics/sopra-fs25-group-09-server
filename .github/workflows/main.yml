@@ -23,11 +23,11 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      #- name: Test and analyze
-       # run: ./gradlew test jacocoTestReport sonar
-        #env:
-         #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Test and analyze
+        run: ./gradlew test jacocoTestReport sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   deploy:
     name: Deploying to Google Cloud
@@ -45,7 +45,6 @@ jobs:
           deliverables: app.yaml
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}  # <-- Add this line
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
