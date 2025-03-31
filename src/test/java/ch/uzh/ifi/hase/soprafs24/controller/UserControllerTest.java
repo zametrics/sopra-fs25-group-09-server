@@ -47,6 +47,7 @@ public class UserControllerTest {
   @MockBean
   private UserService userService;
 
+
   //Test for GET /users
   @Test
   public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
@@ -217,6 +218,102 @@ public void updateUser_userNotFound() throws Exception {
             .content(asJsonString(requestBody)))
             .andExpect(status().isNotFound()) // Expecting 404 Not Found
             .andExpect(jsonPath("$.message").value("User with ID " + userId + " not found")); // Expecting the correct error message
+}
+
+@Test
+    public void login_validCredentials_success() throws Exception {
+        // Given
+        String username = "testUsername";
+        String password = "validPassword";
+        String token = "validToken";
+        Long userId = 1L;
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password); // Assume hashed in practice
+        user.setToken(token);
+        user.setStatus(UserStatus.ONLINE);
+        user.setId(userId);
+
+        // Mock the login service calls
+        given(userService.login(username, password)).willReturn(true);
+        given(userService.getTokenForUser(username)).willReturn(token);
+        given(userService.findByUsername(username)).willReturn(user);
+
+// Create the request body as a Map
+        Map<String, String> loginData = new HashMap<>();
+        loginData.put("username", username);
+        loginData.put("password", password);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(loginData));
+
+
+      mockMvc.perform(postRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.token").value(token))
+                .andExpect(jsonPath("$.userId").value(userId.toString()));
+    }
+
+    @Test
+    public void login_invalidCredentials_fail() throws Exception {
+        // Given
+        String username = "testUsername";
+        String password = "invalidPassword"; // Invalid password
+    
+        // No need to set up a full User object since login will fail
+        given(userService.login(username, password)).willReturn(false);
+        // Optionally mock these if they’re still called despite failure
+        given(userService.getTokenForUser(username)).willReturn(null); // Token might not be generated
+        given(userService.findByUsername(username)).willReturn(null);  // User might not be found
+    
+        // Create the request body as a Map
+        Map<String, String> loginData = new HashMap<>();
+        loginData.put("username", username);
+        loginData.put("password", password);
+    
+        // When/Then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = post("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(loginData));
+    
+        mockMvc.perform(postRequest)
+                .andExpect(status().isOk()) // Still 200 OK since the endpoint returns a response
+                .andExpect(jsonPath("$.success").value(false)); // Expect success: false
+    }
+
+    @Test
+    public void logout_success() throws Exception {
+        String token = "validToken";
+
+        Map<String, String> logoutData = new HashMap<>();
+        logoutData.put("token", token);
+
+        mockMvc.perform(post("/logout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(logoutData)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.message").value("User logged out and status set to OFFLINE"));
+    }
+
+@Test
+public void logout_invalidToken_fail() throws Exception {
+    // Given an invalid token
+    String invalidToken = null;
+
+    Map<String, String> logoutData = new HashMap<>();
+    logoutData.put("token", invalidToken);
+
+    // Perform the logout request as a POST with a JSON body
+    mockMvc.perform(post("/logout")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(logoutData))) // Send token in request body
+        .andExpect(status().isBadRequest())  // Expecting 400 Bad Request for invalid token
+        .andExpect(jsonPath("$.message").value("Token is required"));  // Assert error message
 }
 
   /**

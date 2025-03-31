@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 
@@ -129,7 +130,7 @@ public class UserService {
     if (user != null) {
       user.setDateOfBirth(dateOfBirth);
       userRepository.save(user); // Save the updated user
-  } else {
+    } else {
       throw new EntityNotFoundException("User not found with id: " + id);
   }
         

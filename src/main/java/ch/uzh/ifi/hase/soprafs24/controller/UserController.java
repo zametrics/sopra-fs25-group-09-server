@@ -113,43 +113,39 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
   }
 
-    // When we try to login in URL/ login this handles the request  (by logging in we send a JSON file with our inputs to the backend) 
-    @PostMapping("/login")
-
-    // This function handles the login logic for the user. It takes a JSON object as input and returns a JSON response.
-    // @PostMapping("/login") // This annotation (not present here but assumed) would map this method to a POST request at the /login endpoint.
-    public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
-    // The parameter 'loginData' represents the data sent by the client in the request body.
-    // The '@RequestBody' annotation is used to bind the incoming request body (which is expected to be in JSON format)
-    // to a Java object, in this case, a Map<String, String>.
-    // It is necessary because the POST request will send data in the body (not the URL or query parameters),
-    // and '@RequestBody' converts that JSON body into a Java object that can be processed by your method.
-    
-    // The 'loginData' Map contains key-value pairs where:
-    // - The key is typically the name of the data field (e.g., "username" and "password").
-    // - The value is the actual data sent from the client (e.g., the username and password entered by the user).
-
-        String username = loginData.get("username");
-        String password = loginData.get("password");
-
-        // Call the login method in UserService
-        boolean loginSuccessful = userService.login(username, password);
-        String token = userService.getTokenForUser(username);
-        
-        // If login is successful, set the user status to ONLINE
-        userService.setUserStatus(token, UserStatus.ONLINE);
-
-          // Return success or failure along with the token
+  @PostMapping("/login")
+  public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
+      // Validate input
+      String username = loginData.get("username");
+      String password = loginData.get("password");
+      if (username == null || password == null) {
           Map<String, Object> response = new HashMap<>();
-          response.put("success", loginSuccessful);  // Boolean value indicating login success
-          response.put("token", token);  // String value for the token
-
-          User user = userService.findByUsername(username);
-          response.put("userId", user.getId().toString());
-
-        // Return success or failure based on the result
-        return response;
-    }
+          response.put("success", false);
+          response.put("message", "Username or password missing");
+          return response;
+      }
+  
+      // Attempt login
+      boolean loginSuccessful = userService.login(username, password);
+      if (!loginSuccessful) {
+          Map<String, Object> response = new HashMap<>();
+          response.put("success", false);
+          response.put("message", "Invalid username or password");
+          return response;
+      }
+  
+      // Login succeeded, proceed with token and user details
+      String token = userService.getTokenForUser(username);
+      User user = userService.findByUsername(username);
+      userService.setUserStatus(token, UserStatus.ONLINE);
+  
+      Map<String, Object> response = new HashMap<>();
+      response.put("success", true);
+      response.put("token", token);
+      response.put("userId", user.getId().toString());
+  
+      return response;
+  }
 
 // Get a specific user by their ID
 @GetMapping("/users/{userId}")
@@ -167,7 +163,6 @@ public UserGetDTO getUserById(@PathVariable("userId") Long userId) {
     // Convert the User entity to a UserGetDTO and return it
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
 }
-
 
 
   @PostMapping("/logout")
