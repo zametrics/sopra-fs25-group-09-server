@@ -2,11 +2,14 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import java.time.LocalDateTime;
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+=======
+>>>>>>> f8dd06d022d06ce364cc1260fbee7bbb8a05dbf5
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,23 +21,34 @@ public class Lobby implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
+<<<<<<< HEAD
   @Column(nullable = false)
   private Long id;
+=======
+  @GeneratedValue
+  private Long id; // maybe this would be better with a hashed value
+>>>>>>> f8dd06d022d06ce364cc1260fbee7bbb8a05dbf5
 
   @Column(nullable = false)
   private Long numOfMaxPlayers;
 
   @Column(nullable = false)
+<<<<<<< HEAD
   private String playerIds = "";  // Store as comma-separated values
   
   @Column(nullable = false)
   private Long lobbyOwner;  // New field to store the lobby owner's ID
+=======
+  //private List<User> listOfPlayers = new ArrayList<User>();
+  private String listOfPlayers;
+>>>>>>> f8dd06d022d06ce364cc1260fbee7bbb8a05dbf5
 
   @Column(nullable = false)
   private String wordset;
   
   @Column(nullable = false)
   private Long numOfRounds;
+<<<<<<< HEAD
   
   @Column(nullable = false)
   private int drawTime;
@@ -46,6 +60,10 @@ public class Lobby implements Serializable {
     this.id = 100000L + random.nextInt(900000);
   }
 
+=======
+
+  /*
+>>>>>>> f8dd06d022d06ce364cc1260fbee7bbb8a05dbf5
   public Long getId() {
     return id;
   }
@@ -54,6 +72,7 @@ public class Lobby implements Serializable {
     this.id = id;
   }
 
+<<<<<<< HEAD
   // Convert string to list when getting
   public List<Long> getPlayerIds() {
     if (playerIds == null || playerIds.isEmpty()) {
@@ -90,6 +109,14 @@ public class Lobby implements Serializable {
 
   public void setLobbyOwner(Long lobbyOwner) {
     this.lobbyOwner = lobbyOwner;
+=======
+  public List<User> getListOfPlayers() {
+    return listOfPlayers;
+  }
+
+  public void setListOfPlayer(List<User> listOfPlayers) {
+    this.listOfPlayers = listOfPlayers;
+>>>>>>> f8dd06d022d06ce364cc1260fbee7bbb8a05dbf5
   }
 
   public String getWordset() {
@@ -115,6 +142,7 @@ public class Lobby implements Serializable {
   public void setNumOfRounds(Long numOfRounds) {
     this.numOfRounds = numOfRounds;
   }
+<<<<<<< HEAD
   
   public int getDrawTime() {
     return drawTime;
@@ -124,3 +152,8 @@ public class Lobby implements Serializable {
     this.drawTime = drawTime;
   }
 }
+=======
+
+  */
+}
+>>>>>>> f8dd06d022d06ce364cc1260fbee7bbb8a05dbf5
