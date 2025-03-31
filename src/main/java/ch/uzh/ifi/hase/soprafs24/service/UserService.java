@@ -125,7 +125,13 @@ public class UserService {
         User user = userRepository.findById(id).orElse(null);
 
         // Update the Date of Birth
-        user.setDateOfBirth(dateOfBirth);
+    // Check if the user exists before updating
+    if (user != null) {
+      user.setDateOfBirth(dateOfBirth);
+      userRepository.save(user); // Save the updated user
+  } else {
+      throw new EntityNotFoundException("User not found with id: " + id);
+  }
         
         // Save the updated user
         userRepository.save(user);
