@@ -12,7 +12,7 @@
 - **Type:** Issue #38
 - **Commit Hash:** `5407c66a768a650d5e39b6195b81746b765931b6`
 
-#### Login Tests
+### Added Tets
 
 **Valid Credentials**
 - Implemented a test case for a successful login when valid credentials are provided.
@@ -24,7 +24,6 @@
 - Ensured that the response correctly returns `success: false` without a token.
 - Validated that the system does not authenticate users with incorrect passwords.
 
-#### Logout Tests
 
 **Successful Logout**
 - Implemented a test case to verify that a logged-in user can log out successfully.
