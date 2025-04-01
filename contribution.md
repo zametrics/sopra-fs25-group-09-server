@@ -41,8 +41,37 @@
 - ✅ Task 2 (Pending Details)
 
 ### 🧑‍💻 Nikola
-- ✅ Task 1 (Pending Details)
-- ✅ Task 2 (Pending Details)
+# Commit a746660967007e1097e2f71ba3d870354637e6b5
+
+## Updated build.gradle  
+**Type:** Improvement  
+Enhanced the dependency configuration by adding the jbcrypt library for secure password hashing.
+
+## Enhanced UserController with deleteUser endpoint  
+**Type:** Feature  
+Implemented and refined the deleteUser endpoint to:  
+- Check for a valid Authorization token and return a 403 Forbidden status if missing.  
+- Verify that the user making the request matches the user to be deleted, returning an appropriate error message if there is a mismatch.  
+- Handle exceptions by catching UserNotFoundException and responding with a 404 Not Found status when the specified user does not exist.
+
+## Updated UserService for secure password handling and user deletion  
+**Type:** Bug Fix / Improvement  
+Improved the user service by:  
+- Replacing the insecure plain text password comparison with BCrypt.checkpw to ensure secure validation of user credentials.  
+- Implementing robust exception handling in the deleteUser method to provide clear error messages when a user is not found.
+
+## ✅ Extended UserControllerTest with additional test cases  
+**Type:** Testing  
+Added comprehensive test cases to cover:  
+- Successful deletion of a user account when a valid token is provided and the correct user is authenticated.  
+- The scenario where deletion fails because an unauthorized user attempts to delete another account, ensuring a 403 Forbidden response is returned.  
+- Enhanced login tests to validate both successful and failed login attempts, ensuring that the system correctly distinguishes between valid and invalid credentials.
+
+
+
+
+
+
 
 ### 🧑‍💻 Ilias
 - ✅ Task 1 (Pending Details)
