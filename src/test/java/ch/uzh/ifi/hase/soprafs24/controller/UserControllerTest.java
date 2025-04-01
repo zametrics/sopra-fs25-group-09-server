@@ -26,9 +26,7 @@ import java.util.HashMap;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -218,6 +216,48 @@ public void updateUser_userNotFound() throws Exception {
             .content(asJsonString(requestBody)))
             .andExpect(status().isNotFound()) // Expecting 404 Not Found
             .andExpect(jsonPath("$.message").value("User with ID " + userId + " not found")); // Expecting the correct error message
+}
+//Test for deleting account with valid information -> successful deletion
+@Test
+public void deleteUser_usernameValid_success() throws Exception {
+      //given
+      long userId = 1L;
+      String token = "validToken";
+      //create user
+      User existingUser = new User();
+      existingUser.setId(userId);
+      existingUser.setToken(token);
+
+      given(userService.findByToken(token)).willReturn(existingUser); //simulate valid token scenario
+      Mockito.doNothing().when(userService).deleteUser(userId); //does not necessarily need this but clarifies intention
+
+    mockMvc.perform(delete("/users/{userId}", userId)
+            .header("Authorization", token)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent()); //204
+}
+//Test for trying to delete with wrong id -> return 403 / forbidden
+@Test
+public void deleteUser_unauthorizedUser_fails() throws Exception {
+    // given
+    long userIdToDelete = 1L;
+    long authenticatedUserId = 2L;
+    String token = "valid-token";
+
+    // create the authenticated user (different ID)
+    User authenticatedUser = new User();
+    authenticatedUser.setId(authenticatedUserId);
+    authenticatedUser.setToken(token);
+
+    // mock the service to return the authenticated user when finding by token (same as in other test)
+    given(userService.findByToken(token)).willReturn(authenticatedUser);
+
+    // When and Then
+    mockMvc.perform(delete("/users/{id}", userIdToDelete)
+                    .header("Authorization", token)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isForbidden()) // Expect 403 Forbidden
+            .andExpect(jsonPath("$.message").value("You can only delete your own account"));
 }
 
 @Test

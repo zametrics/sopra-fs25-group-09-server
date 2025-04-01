@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -224,10 +225,31 @@ public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId, @Reques
     return ResponseEntity.noContent().build();  // This will return 204 No Content
 }
 
-     
-    
-    
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Map<String, Object>> deleteUser(
+            @PathVariable("userId") Long userId,
+            @RequestHeader(value = "Authorization", required = false) String token) {  //false in case that not in header(we check manually) because if token is missing
+      if (token == null || token.isEmpty()){                                           // it will be null, and we check for null ir .isEmpty() here immediately
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Not authorized to delete user")); //if no token -> return 403 Forbidden
+    }
+      try {
+          User authenticatedUser = userService.findByToken(token); //
+          if (!authenticatedUser.getId().equals(userId)) {
+              return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "You can only delete your own account"));
+          }         //if id from request != UserId -> return 403 Forbidden
+
+          userService.deleteUser(authenticatedUser.getId());  //actual deletion
+          return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null); //no response body(rest specs (204))
+      }
+          catch(UserNotFoundException e){
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage())); //404 if not found
+          }
+      }
+
 }
+
+    
+
 
 
 

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.mindrot.jbcrypt.BCrypt; //instead of spring security
+import org.mindrot.jbcrypt.BCrypt;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
@@ -50,6 +52,8 @@ public class UserService {
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.OFFLINE);
+    String hashedPassword = BCrypt.hashpw(newUser.getPassword(), BCrypt.gensalt(12));
+    newUser.setPassword(hashedPassword);
     checkIfUserExists(newUser);
     // Saves the given entity but data is only persisted in the database once
     // flush() is called
@@ -89,7 +93,7 @@ public class UserService {
     }
 
     // If the user exists, check if the password matches
-    if (user.getPassword().equals(password)) {
+    if (BCrypt.checkpw(password, user.getPassword())) {
       return true; // Login successful
     }
 
@@ -155,6 +159,13 @@ public class UserService {
   public boolean usernameExists(String username) {
     User userByUsername = userRepository.findByUsername(username);
     return userByUsername != null;
+  }
+
+  public void deleteUser(Long id) {
+      if(!userRepository.existsById(id)) {
+          throw new UserNotFoundException("User with id was not found: " + id);  //use Java persistence API from dependencies
+      }
+      userRepository.deleteById(id);
   }
 
   /* This is a helper method that will check the uniqueness criteria of the
