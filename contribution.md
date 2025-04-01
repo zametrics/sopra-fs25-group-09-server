@@ -34,14 +34,13 @@
 - Implemented a test case for logout failure due to missing or invalid tokens.
 - Ensured that the system returns a `400 Bad Request` response with an appropriate error message.
 
+--
 
 #### Extended UserControllerTest with Delete User Test Cases
 - **Type:** Issue #40
 - **Commit Hash:** `bd64c76bc52ccc11fb525cd33f403f62b1c486c9` 
 
 **Delete User Tests**
-- Added test cases for the account deletion API (`/users/{userId}`) to ensure robust endpoint behavior.
-- Implemented `deleteUser_unauthorizedUser_fails` to verify that a user cannot delete another user’s account, expecting a `403 Forbidden` response with the message "You can only delete your own account".
 - Implemented `deleteUser_missingToken_forbidden` to confirm that requests without an Authorization token are rejected with a `403 Forbidden` response and "Not authorized to delete user" message.
 - Implemented `deleteUser_tokenNotFound_notFound` to test that an invalid token results in a `404 Not Found` response when the user cannot be authenticated, with an appropriate error message.
 
