@@ -4,7 +4,7 @@
 
 ### 🧑‍💻 Richard
 
-#### ✅ Fixed NullPointerException in `setDateOfBirth` method
+#### Fixed NullPointerException in `setDateOfBirth` method
 - **Type:** Bug Fix
 - **Commit Hash:** `f33b7ae1e2b27039ced91dc5591f547974391c6a`
 
