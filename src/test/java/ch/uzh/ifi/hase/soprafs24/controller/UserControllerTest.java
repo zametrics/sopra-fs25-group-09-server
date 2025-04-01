@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -259,6 +260,38 @@ public void deleteUser_unauthorizedUser_fails() throws Exception {
             .andExpect(status().isForbidden()) // Expect 403 Forbidden
             .andExpect(jsonPath("$.message").value("You can only delete your own account"));
 }
+
+
+@Test
+    public void deleteUser_missingToken_forbidden() throws Exception {
+        // Given
+        Long userId = 1L;
+
+        // When/Then
+        mockMvc.perform(delete("/users/{userId}", userId)
+                .contentType(MediaType.APPLICATION_JSON)) // No Authorization header
+                .andExpect(status().isForbidden()) // Expect 403 Forbidden
+                .andExpect(jsonPath("$.message").value("Not authorized to delete user"));
+    }
+
+    @Test
+    public void deleteUser_tokenNotFound_notFound() throws Exception {
+        // Given
+        Long userId = 1L;
+        String token = "invalidToken";
+
+        // Mock the service to throw UserNotFoundException
+        given(userService.findByToken(token)).willThrow(new UserNotFoundException("User not found with the provided token: " + token));
+
+        // When/Then
+        mockMvc.perform(delete("/users/{userId}", userId)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound()) // Expect 404 Not Found
+                .andExpect(jsonPath("$.message").value("User not found with the provided token: " + token));
+    }
+
+
 
 @Test
     public void login_validCredentials_success() throws Exception {
