@@ -49,7 +49,7 @@
 - Added the jbcrypt library for secure password hashing.
 - Replaced the commented-out Spring Security dependency for password handling.
 
----
+
 
 #### Enhanced UserController with deleteUser endpoint
 - **Type:** Issue #44
@@ -61,7 +61,7 @@
 - Returns a 403 Forbidden status if the token is missing or the user IDs do not match.
 - Catches UserNotFoundException and responds with a 404 Not Found status when the specified user is not found.
 
----
+
 
 #### Updated UserService for secure password handling and user deletion
 - **Type:** Issue #42 / Issue #22
@@ -71,7 +71,7 @@
 - Replaced the insecure plain text password comparison with BCrypt.checkpw for secure credential validation.
 - Improved exception handling in the deleteUser method to provide clear error messages when a user is not found.
 
----
+
 
 #### Extended UserControllerTest with additional test cases
 - **Type:** Testing #41 / testing #39
