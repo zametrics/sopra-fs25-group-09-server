@@ -15,6 +15,16 @@ public class UserGetDTO {
   private LocalDateTime createdAt;
 
   private String dateOfBirth;  // Date of Birth as a string
+  private String avatarUrl;  // Add this field
+
+  // Getters and setters
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
+
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
+  }
 
   // Getter and Setter for dateOfBirth
   public String getDateOfBirth() {

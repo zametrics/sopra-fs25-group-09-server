@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 
 
+
 @Repository("userRepository")
 public interface UserRepository extends JpaRepository<User, Long> {
   //Remember that this automatically handles the method definition finByName is not implemented by us.

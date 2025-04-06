@@ -45,6 +45,19 @@ public class User implements Serializable {
   @Column(name = "date_of_birth")
   private String dateOfBirth;  // Date of Birth as a string
 
+
+  @Column(name = "Avatar_URL")
+  private String avatarUrl;  
+
+
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
+
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
+  }
+
   // Getter and Setter for dateOfBirth
   public String getDateOfBirth() {
       return dateOfBirth;

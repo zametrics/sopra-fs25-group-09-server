@@ -225,6 +225,25 @@ public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId, @Reques
     return ResponseEntity.noContent().build();  // This will return 204 No Content
 }
 
+@PutMapping("/users/{userId}/avatar")
+public ResponseEntity<?> updateAvatarUrl(@PathVariable("userId") Long userId, 
+                                         @RequestBody Map<String, String> requestBody) {
+    String avatarUrl = requestBody.get("avatarUrl");
+
+    if (avatarUrl == null || avatarUrl.trim().isEmpty()) {
+        return ResponseEntity.badRequest().body("Avatar URL cannot be empty.");
+    }
+
+    try {
+        User updatedUser = userService.updateAvatarUrl(userId, avatarUrl);
+        return ResponseEntity.ok(DTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser));
+    } catch (UserNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating avatar URL.");
+    }
+}
+
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Map<String, Object>> deleteUser(
             @PathVariable("userId") Long userId,

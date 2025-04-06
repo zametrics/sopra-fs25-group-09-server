@@ -200,4 +200,15 @@ public User findByToken(String token) {
   return user;
 }
 
+public User updateAvatarUrl(Long userId, String avatarUrl) {
+  User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+  
+  // Update avatarUrl
+  user.setAvatarUrl(avatarUrl);
+  
+  // Save the updated user entity
+  return userRepository.save(user);
+}
+
 }
