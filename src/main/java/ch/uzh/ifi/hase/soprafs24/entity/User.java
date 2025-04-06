@@ -71,6 +71,7 @@ public class User implements Serializable {
   @PrePersist
   protected void onCreate() {
       this.createdAt = LocalDateTime.now();
+      this.avatarUrl = "https://i.pinimg.com/originals/0f/68/94/0f6894e539589a50809e45833c8bb6c4.jpg";
     }
     
   // Getters and Setters
