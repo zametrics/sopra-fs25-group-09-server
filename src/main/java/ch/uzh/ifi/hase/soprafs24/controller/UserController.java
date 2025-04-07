@@ -222,7 +222,8 @@ public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId, @Reques
     // Return success response
     Map<String, Object> response = new HashMap<>();
     response.put("success", true);
-    return ResponseEntity.noContent().build();  // This will return 204 No Content
+    response.put("message", "User updated successfully.");
+    return ResponseEntity.ok(response);
 }
 
 @PutMapping("/users/{userId}/avatar")
