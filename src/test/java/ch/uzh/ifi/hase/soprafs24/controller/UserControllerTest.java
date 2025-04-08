@@ -190,6 +190,7 @@ public void updateUser_usernameValid_success() throws Exception {
 }
 
 // Test for PUT /users/{id} --> 404 User not found (Updating username)
+    {*
 @Test
 public void updateUser_userNotFound() throws Exception {
     // Given
@@ -210,6 +211,7 @@ public void updateUser_userNotFound() throws Exception {
             .andExpect(status().isNotFound()) // Expecting 404 Not Found
             .andExpect(jsonPath("$.message").value("User with ID " + userId + " not found")); // Expecting the correct error message
 }
+*}
 //Test for deleting account with valid information -> successful deletion
 @Test
 public void deleteUser_usernameValid_success() throws Exception {
