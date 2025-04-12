@@ -274,6 +274,56 @@ public class LobbyControllerTest {
                 .andExpect(jsonPath("$.playerIds", hasSize(1)));
     }
 
+    @Test
+    public void updateLobby_onlyLanguageAndType_success() throws Exception {
+        // given
+        Long lobbyId = 123456L;
+
+        LobbyPutDTO lobbyPutDTO = new LobbyPutDTO();
+        lobbyPutDTO.setLanguage("de");
+        lobbyPutDTO.setType("animals");
+
+        Lobby updatedLobby = new Lobby();
+        updatedLobby.setId(lobbyId);
+        updatedLobby.setLanguage("de");
+        updatedLobby.setType("animals");
+
+        given(lobbyService.updateLobby(Mockito.eq(lobbyId), Mockito.any())).willReturn(updatedLobby);
+
+        // when
+        MockHttpServletRequestBuilder putRequest = put("/lobbies/" + lobbyId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(lobbyPutDTO));
+
+        // then
+        mockMvc.perform(putRequest)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void updateLobby_lobbyNotFound_returnsNotFound() throws Exception {
+        // given
+        Long lobbyId = 999L;
+
+        LobbyPutDTO lobbyPutDTO = new LobbyPutDTO();
+        lobbyPutDTO.setLanguage("fr");
+        lobbyPutDTO.setType("countries");
+
+        given(lobbyService.updateLobby(Mockito.eq(lobbyId), Mockito.any()))
+                .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found"));
+
+        // when
+        MockHttpServletRequestBuilder putRequest = put("/lobbies/" + lobbyId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(lobbyPutDTO));
+
+        // then
+        mockMvc.perform(putRequest)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is("Lobby not found")));
+    }
+
+
 
 
 
