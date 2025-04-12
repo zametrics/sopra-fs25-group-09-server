@@ -15,19 +15,21 @@ public interface LobbyDTOMapper {
     @Mapping(source = "lobbyOwner", target = "lobbyOwner")
     @Mapping(source = "numOfMaxPlayers", target = "numOfMaxPlayers")
     @Mapping(source = "playerIds", target = "playerIds")
-    @Mapping(source = "wordset", target = "wordset")
+    @Mapping(source = "language", target = "language")
     @Mapping(source = "numOfRounds", target = "numOfRounds")
     @Mapping(source = "drawTime", target = "drawTime")
     @Mapping(target = "id", ignore = true)
+    @Mapping(source = "type", target = "type")
     Lobby convertLobbyPostDTOtoEntity(LobbyPostDTO lobbyPostDTO);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "lobbyOwner", target = "lobbyOwner")
     @Mapping(source = "numOfMaxPlayers", target = "numOfMaxPlayers")
     @Mapping(source = "playerIds", target = "playerIds")
-    @Mapping(source = "wordset", target = "wordset")
+    @Mapping(source = "language", target = "language")
     @Mapping(source = "numOfRounds", target = "numOfRounds")
     @Mapping(source = "drawTime", target = "drawTime")
+    @Mapping(source = "type", target = "type")
     LobbyGetDTO convertEntityToLobbyGetDTO(Lobby lobby);
 
 
@@ -35,8 +37,9 @@ public interface LobbyDTOMapper {
     @Mapping(source = "lobbyOwner", target = "lobbyOwner")
     @Mapping(source = "numOfMaxPlayers", target = "numOfMaxPlayers")
     @Mapping(source = "playerIds", target = "playerIds")
-    @Mapping(source = "wordset", target = "wordset")
+    @Mapping(source = "language", target = "language")
     @Mapping(source = "numOfRounds", target = "numOfRounds")
     @Mapping(source = "drawTime", target = "drawTime")
+    @Mapping(source = "type", target = "type")
     Lobby convertLobbyPutDTOtoEntity(LobbyPutDTO lobbyPutDTO);
 }

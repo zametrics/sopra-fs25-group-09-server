@@ -31,13 +31,17 @@ public class Lobby implements Serializable {
   private Long lobbyOwner;  // New field to store the lobby owner's ID
 
   @Column(nullable = false)
-  private String wordset;
+  private String language;
   
   @Column(nullable = false)
   private Long numOfRounds;
   
   @Column(nullable = false)
   private int drawTime;
+
+  @Column(nullable = false)
+  private String type = "anything";  // Default value
+    
 
   // Constructor with random ID generation
   public Lobby() {
@@ -92,12 +96,12 @@ public class Lobby implements Serializable {
     this.lobbyOwner = lobbyOwner;
   }
 
-  public String getWordset() {
-    return wordset;
+  public String getLanguage() {
+    return language;
   }
 
-  public void setWordset(String wordset) {
-    this.wordset = wordset;
+  public void setLanguage(String language) {
+    this.language = language;
   }
 
   public Long getNumOfMaxPlayers() {
@@ -122,5 +126,13 @@ public class Lobby implements Serializable {
   
   public void setDrawTime(int drawTime) {
     this.drawTime = drawTime;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 }

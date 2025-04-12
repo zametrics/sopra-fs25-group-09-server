@@ -8,9 +8,10 @@ public class LobbyGetDTO {
     private Long lobbyOwner;
     private Long numOfMaxPlayers;
     private List<Long> playerIds;
-    private String wordset;
+    private String language;
     private Long numOfRounds;
     private int drawTime;
+    private String type;
 
     // Getters and Setters
     public Long getId() {
@@ -45,12 +46,12 @@ public class LobbyGetDTO {
         this.playerIds = playerIds;
     }
 
-    public String getWordset() {
-        return wordset;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setWordset(String wordset) {
-        this.wordset = wordset;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public Long getNumOfRounds() {
@@ -67,5 +68,13 @@ public class LobbyGetDTO {
 
     public void setDrawTime(int drawTime) {
         this.drawTime = drawTime;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

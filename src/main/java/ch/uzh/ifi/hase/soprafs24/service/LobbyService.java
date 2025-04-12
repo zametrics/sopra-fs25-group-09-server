@@ -45,8 +45,8 @@ public class LobbyService {
             newLobby.setNumOfMaxPlayers(8L);
         }
         
-        if (newLobby.getWordset() == null) {
-            newLobby.setWordset("english");
+        if (newLobby.getLanguage() == null) {
+            newLobby.setLanguage("english");
         }
         
         if (newLobby.getNumOfRounds() == null) {
@@ -60,6 +60,10 @@ public class LobbyService {
         // Initialize playerIds if null
         if (newLobby.getPlayerIds() == null) {
             newLobby.setPlayerIds(new ArrayList<>());
+        }
+
+        if (newLobby.getType() == null) {
+            newLobby.setType("anything");
         }
 
         
@@ -93,8 +97,8 @@ public class LobbyService {
             existingLobby.setNumOfMaxPlayers(lobbyUpdate.getNumOfMaxPlayers());
         }
         
-        if (lobbyUpdate.getWordset() != null) {
-            existingLobby.setWordset(lobbyUpdate.getWordset());
+        if (lobbyUpdate.getLanguage() != null) {
+            existingLobby.setLanguage(lobbyUpdate.getLanguage());
         }
         
         if (lobbyUpdate.getNumOfRounds() != null) {
@@ -107,6 +111,10 @@ public class LobbyService {
         // If player IDs are provided, update them
         if (lobbyUpdate.getPlayerIds() != null) {
             existingLobby.setPlayerIds(lobbyUpdate.getPlayerIds());
+        }
+
+        if (lobbyUpdate.getType() != null) {
+            existingLobby.setType(lobbyUpdate.getType());
         }
         
         // Save and return updated lobby

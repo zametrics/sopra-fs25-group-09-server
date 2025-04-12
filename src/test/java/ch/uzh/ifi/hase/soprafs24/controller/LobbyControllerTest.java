@@ -52,7 +52,7 @@ public class LobbyControllerTest {
         lobby.setLobbyOwner(1L);
         lobby.setNumOfMaxPlayers(8L);
         lobby.setPlayerIds(Arrays.asList(1L, 2L));
-        lobby.setWordset("english");
+        lobby.setLanguage("english");
         lobby.setNumOfRounds(3L);
         lobby.setDrawTime(80);
 
@@ -70,7 +70,7 @@ public class LobbyControllerTest {
                 .andExpect(jsonPath("$[0].numOfMaxPlayers", is(lobby.getNumOfMaxPlayers().intValue())))
                 .andExpect(jsonPath("$[0].playerIds", contains(1, 2)))
                 //kept getting Expected: is [<1L>, <2L>] but: was<[1,2]> error so changed to contains (also needed import for this(org.hamcrest.Matchers.contains))
-                .andExpect(jsonPath("$[0].wordset", is(lobby.getWordset())))
+                .andExpect(jsonPath("$[0].language", is(lobby.getLanguage())))
                 .andExpect(jsonPath("$[0].numOfRounds", is(lobby.getNumOfRounds().intValue())))
                 .andExpect(jsonPath("$[0].drawTime", is(lobby.getDrawTime())));
     }
@@ -84,7 +84,7 @@ public class LobbyControllerTest {
         lobby.setLobbyOwner(1L);
         lobby.setNumOfMaxPlayers(8L);
         lobby.setPlayerIds(Arrays.asList(1L));
-        lobby.setWordset("english");
+        lobby.setLanguage("english");
         lobby.setNumOfRounds(3L);
         lobby.setDrawTime(80);
 
@@ -92,7 +92,7 @@ public class LobbyControllerTest {
         lobbyPostDTO.setLobbyOwner(1L);
         lobbyPostDTO.setNumOfMaxPlayers(8L);
         lobbyPostDTO.setPlayerIds(Arrays.asList(1L));
-        lobbyPostDTO.setWordset("english");
+        lobbyPostDTO.setLanguage("english");
         lobbyPostDTO.setNumOfRounds(3L);
         lobbyPostDTO.setDrawTime(80);
 
@@ -110,7 +110,7 @@ public class LobbyControllerTest {
                 .andExpect(jsonPath("$.lobbyOwner", is(lobby.getLobbyOwner().intValue())))
                 .andExpect(jsonPath("$.numOfMaxPlayers", is(lobby.getNumOfMaxPlayers().intValue())))
                 .andExpect(jsonPath("$.playerIds", contains(1)))
-                .andExpect(jsonPath("$.wordset", is(lobby.getWordset())))
+                .andExpect(jsonPath("$.language", is(lobby.getLanguage())))
                 .andExpect(jsonPath("$.numOfRounds", is(lobby.getNumOfRounds().intValue())))
                 .andExpect(jsonPath("$.drawTime", is(lobby.getDrawTime())));
     }
@@ -124,7 +124,7 @@ public class LobbyControllerTest {
         lobby.setLobbyOwner(1L);
         lobby.setNumOfMaxPlayers(8L);
         lobby.setPlayerIds(Arrays.asList(1L, 2L));
-        lobby.setWordset("english");
+        lobby.setLanguage("english");
         lobby.setNumOfRounds(3L);
         lobby.setDrawTime(80);
 
@@ -141,7 +141,7 @@ public class LobbyControllerTest {
                 .andExpect(jsonPath("$.lobbyOwner", is(lobby.getLobbyOwner().intValue())))
                 .andExpect(jsonPath("$.numOfMaxPlayers", is(lobby.getNumOfMaxPlayers().intValue())))
                 .andExpect(jsonPath("$.playerIds", contains(1, 2)))
-                .andExpect(jsonPath("$.wordset", is(lobby.getWordset())))
+                .andExpect(jsonPath("$.language", is(lobby.getLanguage())))
                 .andExpect(jsonPath("$.numOfRounds", is(lobby.getNumOfRounds().intValue())))
                 .andExpect(jsonPath("$.drawTime", is(lobby.getDrawTime())));
     }
@@ -173,7 +173,7 @@ public class LobbyControllerTest {
         lobby.setLobbyOwner(1L);
         lobby.setNumOfMaxPlayers(10L);
         lobby.setPlayerIds(Arrays.asList(1L, 2L, 3L));
-        lobby.setWordset("english");
+        lobby.setLanguage("english");
         lobby.setNumOfRounds(5L);
         lobby.setDrawTime(90);
 
@@ -182,7 +182,7 @@ public class LobbyControllerTest {
         lobbyPutDTO.setLobbyOwner(1L);
         lobbyPutDTO.setNumOfMaxPlayers(10L);
         lobbyPutDTO.setPlayerIds(Arrays.asList(1L, 2L, 3L));
-        lobbyPutDTO.setWordset("english");
+        lobbyPutDTO.setLanguage("english");
         lobbyPutDTO.setNumOfRounds(5L);
         lobbyPutDTO.setDrawTime(90);
 
@@ -207,7 +207,7 @@ public class LobbyControllerTest {
         lobby.setLobbyOwner(1L);
         lobby.setNumOfMaxPlayers(8L);
         lobby.setPlayerIds(Arrays.asList(1L, 2L, 3L));
-        lobby.setWordset("english");
+        lobby.setLanguage("english");
         lobby.setNumOfRounds(3L);
         lobby.setDrawTime(80);
 
@@ -255,7 +255,7 @@ public class LobbyControllerTest {
         lobby.setLobbyOwner(1L);
         lobby.setNumOfMaxPlayers(8L);
         lobby.setPlayerIds(Arrays.asList(1L));
-        lobby.setWordset("english");
+        lobby.setLanguage("english");
         lobby.setNumOfRounds(3L);
         lobby.setDrawTime(80);
 
