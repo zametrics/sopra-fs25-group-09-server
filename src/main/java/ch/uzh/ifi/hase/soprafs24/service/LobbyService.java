@@ -148,7 +148,7 @@ public class LobbyService {
         return lobby;
     }
 
-    // Remove a player from a lobby  ########## NOT YET TESTED #########
+    // Remove a player from a lobby
     public Lobby removePlayerFromLobby(Long lobbyId, Long playerId) {
         Lobby lobby = getLobbyById(lobbyId);
         
@@ -159,6 +159,14 @@ public class LobbyService {
         
         // Remove player
         lobby.removePlayerId(playerId);
+        
+        // Check if the lobby is now empty
+        if (lobby.getPlayerIds().isEmpty()) {
+            // If lobby is empty, delete it
+            lobbyRepository.delete(lobby);
+            log.debug("Deleted empty Lobby: {}", lobby);
+            return lobby; // Note: This lobby will not exist in the database anymore
+        }
         
         // Save and return updated lobby
         lobby = lobbyRepository.save(lobby);
