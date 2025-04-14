@@ -79,6 +79,9 @@ public class LobbyController {
     @ResponseBody
     public LobbyGetDTO leaveLobby(@PathVariable("lobbyId") Long lobbyId, @RequestParam Long playerId) {
         Lobby updatedLobby = lobbyService.removePlayerFromLobby(lobbyId, playerId);
+        
+        // If the lobby is empty (no more players), it will be deleted
+        // We can still return the DTO for the client to know the state before deletion
         return LobbyDTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby);
     }
 }
