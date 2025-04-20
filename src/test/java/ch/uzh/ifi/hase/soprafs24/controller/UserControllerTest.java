@@ -399,4 +399,31 @@ public void logout_invalidToken_fail() throws Exception {
           String.format("The request body could not be created.%s", e.toString()));
     }
   }
+
+  @Test
+public void updateAvatarUrl_success() throws Exception {
+    // given
+    Long userId = 1L;
+    String newAvatarUrl = "https://example.com/new-avatar.jpg";
+    
+    User updatedUser = new User();
+    updatedUser.setId(userId);
+    updatedUser.setUsername("testUser");
+    updatedUser.setAvatarUrl(newAvatarUrl);
+    
+    // Create request body
+    Map<String, String> requestBody = new HashMap<>();
+    requestBody.put("avatarUrl", newAvatarUrl);
+    
+    given(userService.updateAvatarUrl(userId, newAvatarUrl)).willReturn(updatedUser);
+    
+    // when/then
+    mockMvc.perform(put("/users/{userId}/avatar", userId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(requestBody)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(updatedUser.getId().intValue())))
+            .andExpect(jsonPath("$.username", is(updatedUser.getUsername())))
+            .andExpect(jsonPath("$.avatarUrl", is(updatedUser.getAvatarUrl())));
+}
 }

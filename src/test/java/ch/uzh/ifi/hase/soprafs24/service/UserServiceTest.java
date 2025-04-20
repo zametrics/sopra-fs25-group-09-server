@@ -66,4 +66,23 @@ public class UserServiceTest {
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
 
+  @Test
+  public void setUserStatus_validToken_updatesStatus() {
+    // given
+    User testUser = new User();
+    testUser.setId(1L);
+    testUser.setUsername("testUser");
+    testUser.setToken("valid-token");
+    testUser.setStatus(UserStatus.OFFLINE);
+
+    Mockito.when(userRepository.findByToken("valid-token")).thenReturn(testUser);
+    
+    // when
+    userService.setUserStatus("valid-token", UserStatus.ONLINE);
+    
+    // then
+    assertEquals(UserStatus.ONLINE, testUser.getStatus());
+    Mockito.verify(userRepository, Mockito.times(1)).save(testUser);
+}
+
 }

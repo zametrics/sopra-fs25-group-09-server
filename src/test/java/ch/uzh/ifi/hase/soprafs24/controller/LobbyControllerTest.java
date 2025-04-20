@@ -20,6 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
@@ -322,6 +325,39 @@ public class LobbyControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", is("Lobby not found")));
     }
+
+    @Test
+public void leaveLobby_lastPlayer_lobbyDeleted() throws Exception {
+    // given
+    Long lobbyId = 123456L;
+    Long playerId = 1L;
+    
+    // Create a lobby with only one player who is about to leave
+    Lobby lobby = new Lobby();
+    lobby.setId(lobbyId);
+    lobby.setLobbyOwner(playerId);
+    lobby.setNumOfMaxPlayers(8L);
+    lobby.setPlayerIds(new ArrayList<>()); // Empty list to simulate the player was removed
+    lobby.setLanguage("english");
+    lobby.setNumOfRounds(3L);
+    lobby.setDrawTime(80);
+    
+    // Mock the service to return the lobby with the player removed
+    given(lobbyService.removePlayerFromLobby(lobbyId, playerId)).willReturn(lobby);
+    
+    // when/then
+    MockHttpServletRequestBuilder putRequest = put("/lobbies/{lobbyId}/leave", lobbyId)
+            .param("playerId", playerId.toString())
+            .contentType(MediaType.APPLICATION_JSON);
+    
+    mockMvc.perform(putRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(lobby.getId().intValue())))
+            .andExpect(jsonPath("$.playerIds", hasSize(0)));
+    
+    // Verify the service was called to remove the player
+    verify(lobbyService, times(1)).removePlayerFromLobby(lobbyId, playerId);
+}
 
 
 

@@ -79,6 +79,27 @@ public class GPTWordControllerTest {
         mockMvc.perform(getRequest)
                 .andExpect(status().isBadRequest());
     }
+
+    // Test: Missing API key
+    @Test
+    public void getWords_missingAPIKey_returnsErrorWords() throws Exception {
+    // given
+    // Mock the service to simulate an API key issue
+    given(chatGPTService.generateWords("en", "nouns", 3))
+            .willReturn(List.of("Error", "when", "requesting", "words"));
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/api/words/gpt")
+            .param("lang", "en")
+            .param("type", "nouns")
+            .param("count", "3")
+            .contentType(MediaType.APPLICATION_JSON);
+
+    // then
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", containsInAnyOrder("Error", "when", "requesting", "words")));
+}
 }
 
 
