@@ -2,10 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.*;
@@ -41,6 +38,12 @@ public class Lobby implements Serializable {
 
   @Column(nullable = false)
   private String type = "anything";  // Default value
+
+  @Column(nullable = true)
+  private String currentPainterToken;
+
+  @Column(nullable = false)
+  private String painterHistoryTokens = "";
     
 
   // Constructor with random ID generation
@@ -86,6 +89,40 @@ public class Lobby implements Serializable {
     currentIds.remove(playerId);
     setPlayerIds(currentIds);
   }
+
+
+    // Use a Set internally for easier checking, but store as comma-separated string
+    public Set<String> getPainterHistoryTokens() {
+        if (painterHistoryTokens == null || painterHistoryTokens.isEmpty()) {
+            return new HashSet<>(); // Return an empty Set
+        }
+        // Split the string and collect into a Set
+        return new HashSet<>(Arrays.asList(painterHistoryTokens.split(",")));
+    }
+
+    // Accept a Set and convert to string for storage
+    public void setPainterHistoryTokens(Set<String> painterHistoryTokenSet) {
+        if (painterHistoryTokenSet == null || painterHistoryTokenSet.isEmpty()) {
+            this.painterHistoryTokens = "";
+        } else {
+            this.painterHistoryTokens = String.join(",", painterHistoryTokenSet);
+        }
+    }
+
+
+    // Method to add a token to the history
+    public void addTokenToPainterHistory(String playerToken) {
+        // Get the Set of current history tokens
+        Set<String> currentTokens = getPainterHistoryTokens(); // Variable is 'currentTokens' (plural)
+        if (currentTokens.add(playerToken)) { // Check if adding the token modified the set
+            setPainterHistoryTokens(currentTokens); // Update the stored string using the modified set
+        }
+    }
+
+    // Method to clear the history (start of new cycle)
+    public void clearPainterHistory() {
+        setPainterHistoryTokens(Collections.emptySet()); // Use helper method
+    }
 
   // Getter and setter for the lobby owner
   public Long getLobbyOwner() {
@@ -135,4 +172,14 @@ public class Lobby implements Serializable {
   public void setType(String type) {
     this.type = type;
   }
+
+    public String getCurrentPainterToken() {
+        return this.currentPainterToken;
+    }
+
+    // Setter
+    public void setCurrentPainterToken(String currentPainterToken) {
+        this.currentPainterToken = currentPainterToken;
+    }
+
 }

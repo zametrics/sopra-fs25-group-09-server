@@ -12,6 +12,8 @@ public class LobbyGetDTO {
     private Long numOfRounds;
     private int drawTime;
     private String type;
+    private String currentPainterToken;
+    private List<String> painterHistoryTokens;
 
     // Getters and Setters
     public Long getId() {
@@ -77,4 +79,19 @@ public class LobbyGetDTO {
     public void setType(String type) {
         this.type = type;
     }
-}
+
+    public String getCurrentPainterToken() {
+        return currentPainterToken;
+    }
+
+    public void setCurrentPainterToken(String currentPainterToken) {
+        this.currentPainterToken = currentPainterToken;
+    }
+
+    public List<String> getPainterHistoryTokens() {
+        return painterHistoryTokens;
+    }
+
+    public void setPainterHistoryTokens(List<String> painterHistoryTokens) {
+        this.painterHistoryTokens = painterHistoryTokens;
+    }}

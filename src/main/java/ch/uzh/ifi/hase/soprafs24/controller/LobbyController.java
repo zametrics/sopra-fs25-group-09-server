@@ -84,4 +84,14 @@ public class LobbyController {
         // We can still return the DTO for the client to know the state before deletion
         return LobbyDTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby);
     }
+
+    @PostMapping("/lobbies/{lobbyId}/nextPainter")
+    @ResponseStatus(HttpStatus.OK) // OK because we return the updated state
+    @ResponseBody
+    public LobbyGetDTO selectNextPainter(@PathVariable("lobbyId") Long lobbyId) {
+        Lobby updatedLobby = lobbyService.selectNextPainter(lobbyId);
+
+        // Convert the updated entity to DTO and return it
+        return LobbyDTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby);
+    }
 }
