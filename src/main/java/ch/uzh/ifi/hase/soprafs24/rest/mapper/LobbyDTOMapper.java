@@ -11,7 +11,7 @@ import org.mapstruct.factory.Mappers;
 public interface LobbyDTOMapper {
 
     LobbyDTOMapper INSTANCE = Mappers.getMapper(LobbyDTOMapper.class);
-    
+
     @Mapping(source = "lobbyOwner", target = "lobbyOwner")
     @Mapping(source = "numOfMaxPlayers", target = "numOfMaxPlayers")
     @Mapping(source = "playerIds", target = "playerIds")
@@ -22,6 +22,7 @@ public interface LobbyDTOMapper {
     @Mapping(source = "type", target = "type")
     @Mapping(target = "currentPainterToken", ignore = true)
     @Mapping(target = "painterHistoryTokens", ignore = true)
+    @Mapping(target = "currentWord", ignore = true) // Ignore CurrentWord
     Lobby convertLobbyPostDTOtoEntity(LobbyPostDTO lobbyPostDTO);
 
     @Mapping(source = "id", target = "id")
@@ -34,8 +35,8 @@ public interface LobbyDTOMapper {
     @Mapping(source = "type", target = "type")
     @Mapping(source = "currentPainterToken", target = "currentPainterToken")
     @Mapping(source = "painterHistoryTokens", target = "painterHistoryTokens")
+    @Mapping(source = "currentWord", target = "currentWord")
     LobbyGetDTO convertEntityToLobbyGetDTO(Lobby lobby);
-
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "lobbyOwner", target = "lobbyOwner")
@@ -47,5 +48,6 @@ public interface LobbyDTOMapper {
     @Mapping(source = "type", target = "type")
     @Mapping(target = "currentPainterToken", ignore = true)
     @Mapping(target = "painterHistoryTokens", ignore = true)
+    @Mapping(target = "currentWord", ignore = true) // Ignore CurrentWord
     Lobby convertLobbyPutDTOtoEntity(LobbyPutDTO lobbyPutDTO);
 }

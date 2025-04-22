@@ -410,4 +410,27 @@ public class LobbyService {
 
         return lobby; // Return the updated lobby object
     }
+
+    public Lobby setLobbyWord(Long lobbyId, String word) {
+        Lobby lobby = getLobbyById(lobbyId);
+        log.debug("Received word for lobby {}: '{}'", lobbyId, word);
+    
+        if (word == null || word.trim().isEmpty()) {
+            log.warn("Invalid word provided for lobby {}: '{}'", lobbyId, word);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Word cannot be null or empty.");
+        }
+    
+        String trimmedWord = word.trim();
+        // Strip any surrounding quotation marks
+        String cleanedWord = trimmedWord.replaceAll("^\"|\"$", "");
+        log.debug("Cleaned word: '{}'", cleanedWord);
+    
+        lobby.setCurrentWord(cleanedWord);
+        log.debug("Set CurrentWord to: '{}'", cleanedWord);
+        lobby = lobbyRepository.save(lobby);
+        log.debug("Saved lobby with CurrentWord: '{}'", lobby.getCurrentWord());
+        lobbyRepository.flush();
+        log.info("Word set to '{}' for lobby {}", cleanedWord, lobbyId);
+        return lobby;
+    }
 }

@@ -14,6 +14,7 @@ public class LobbyGetDTO {
     private String type;
     private String currentPainterToken;
     private List<String> painterHistoryTokens;
+    private String currentWord; 
 
     // Getters and Setters
     public Long getId() {
@@ -94,4 +95,13 @@ public class LobbyGetDTO {
 
     public void setPainterHistoryTokens(List<String> painterHistoryTokens) {
         this.painterHistoryTokens = painterHistoryTokens;
-    }}
+    }
+
+    public String getCurrentWord() {
+        return currentWord;
+    }
+
+    public void setCurrentWord(String currentWord) {
+        this.currentWord = currentWord;
+    }
+}

@@ -94,4 +94,14 @@ public class LobbyController {
         // Convert the updated entity to DTO and return it
         return LobbyDTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby);
     }
+
+
+    @PutMapping("/lobbies/{lobbyId}/word")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public LobbyGetDTO setLobbyWord(@PathVariable("lobbyId") Long lobbyId, @RequestBody String word) {
+        Lobby updatedLobby = lobbyService.setLobbyWord(lobbyId, word);
+        return LobbyDTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby);
+        
+    }
 }
