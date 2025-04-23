@@ -421,16 +421,11 @@ public class LobbyService {
         }
     
         String trimmedWord = word.trim();
-        // Strip any surrounding quotation marks
-        String cleanedWord = trimmedWord.replaceAll("^\"|\"$", "");
-        log.debug("Cleaned word: '{}'", cleanedWord);
+
     
-        lobby.setCurrentWord(cleanedWord);
-        log.debug("Set CurrentWord to: '{}'", cleanedWord);
+        lobby.setCurrentWord(trimmedWord);
         lobby = lobbyRepository.save(lobby);
-        log.debug("Saved lobby with CurrentWord: '{}'", lobby.getCurrentWord());
         lobbyRepository.flush();
-        log.info("Word set to '{}' for lobby {}", cleanedWord, lobbyId);
         return lobby;
     }
 }

@@ -104,4 +104,13 @@ public class LobbyController {
         return LobbyDTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby);
         
     }
+
+    @GetMapping("/lobbies/{lobbyId}/word")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String getLobbyWord(@PathVariable("lobbyId") Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        String currentWord = lobby.getCurrentWord();
+        return currentWord;
+    }
 }
