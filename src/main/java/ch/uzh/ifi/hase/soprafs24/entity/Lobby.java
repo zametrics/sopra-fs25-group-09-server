@@ -1,7 +1,5 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
