@@ -7,6 +7,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 @Service
@@ -64,10 +66,14 @@ public class ChatGPTService {
             //parse json array string from GPT response
             return objectMapper.readValue(content, new TypeReference<>() {});  //content is herre still just a JSON string so we turn it into a "real" List<String> (Java List)
         } catch (Exception e) {
-            e.printStackTrace();
-            return List.of("Error", "when", "requesting", "wordsBackend");
+            e.printStackTrace(); // Print to console (System.err)
+             // Capture stack trace as a String
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String stackTrace = sw.toString();
+            return List.of("Error", "exception", stackTrace);
 
     }
 
 }}
-
