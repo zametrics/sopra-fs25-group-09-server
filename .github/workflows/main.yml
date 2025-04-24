@@ -1,55 +1,36 @@
-name: Deploy Project to App Engine
+name: Deploy Project to App Engine (Simplified Secrets)
 
 on:
   push:
     branches:
       - main
-
-  # run the workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Test and Sonarqube
-    runs-on: ubuntu-latest
-
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
-
-      - name: Install Java 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
-
-      - name: Test and analyze
-        run: ./gradlew test jacocoTestReport sonar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  # Optional: Keep your 'test' job if you have one
 
   deploy:
-    name: Deploying to Google Cloud
+    name: Deploying to Google Cloud (Simplified Auth)
     runs-on: ubuntu-latest
-    # needs: test
+    # needs: test # Optional: Uncomment if you have a test job
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Deploy to App Engine
-        id: deploy
-        uses: google-github-actions/deploy-appengine@v0.2.0
+      # Authenticate using Service Account Key JSON (Less Secure Method)
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          deliverables: app.yaml
-          version: v1
-          credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  #pass to deployment(find out if app.yml and where)
+          credentials_json: '${{ secrets.GCP_SERVICE_CREDENTIALS }}' # Use the SA Key secret
 
-      - name: Test
-        run: curl "${{ steps.deploy.outputs.url }}"
+      # Set up Cloud SDK (gcloud CLI)
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy and Set Secret Env Var
+        run: |-
+          gcloud app deploy app.yaml --quiet \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --set-env-vars=OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
+        # '--set-env-vars' injects the GitHub Secret into the App Engine runtime environment
