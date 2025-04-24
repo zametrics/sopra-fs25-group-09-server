@@ -65,7 +65,7 @@ public class ChatGPTService {
             return objectMapper.readValue(content, new TypeReference<>() {});  //content is herre still just a JSON string so we turn it into a "real" List<String> (Java List)
         } catch (Exception e) {
             e.printStackTrace();
-            return List.of("Error", "when", "requesting", "words");
+            return List.of("Error", "when", "requesting", "wordsBackend");
 
     }
 
