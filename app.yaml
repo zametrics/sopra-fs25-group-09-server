@@ -3,3 +3,5 @@
 
 runtime: java17
 instance_class: F2
+env_variables:
+  OPENAI_API_KEY: ''  # Injected from GitHub Secrets via main.yml
