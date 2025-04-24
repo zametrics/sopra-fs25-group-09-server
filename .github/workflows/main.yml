@@ -1,36 +1,61 @@
-name: Deploy Project to App Engine (Simplified Secrets)
+name: Deploy Project to App Engine
 
 on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 jobs:
-  # Optional: Keep your 'test' job if you have one
-
-  deploy:
-    name: Deploying to Google Cloud (Simplified Auth)
+  test:
+    name: Test and Sonarqube
     runs-on: ubuntu-latest
-    # needs: test # Optional: Uncomment if you have a test job
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository code
         uses: actions/checkout@v4
 
-      # Authenticate using Service Account Key JSON (Less Secure Method)
+      - name: Install Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Test and analyze
+        run: ./gradlew test jacocoTestReport sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  deploy:
+    name: Deploying to Google Cloud
+    runs-on: ubuntu-latest
+    # needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: '${{ secrets.GCP_SERVICE_CREDENTIALS }}' # Use the SA Key secret
+          credentials_json: '${{ secrets.GCP_SERVICE_CREDENTIALS }}'
 
-      # Set up Cloud SDK (gcloud CLI)
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Deploy and Set Secret Env Var
-        run: |-
-          gcloud app deploy app.yaml --quiet \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
-            --set-env-vars=OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
-        # '--set-env-vars' injects the GitHub Secret into the App Engine runtime environment
+      - name: Deploy to App Engine with env var
+        uses: google-github-actions/deploy-appengine@v0.2.0
+        with:
+          deliverables: app.yaml
+          version: v1
+          credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
+          env_vars: |
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+
+      - name: Test endpoint (optional)
+        run: curl "${{ steps.deploy.outputs.url }}"
