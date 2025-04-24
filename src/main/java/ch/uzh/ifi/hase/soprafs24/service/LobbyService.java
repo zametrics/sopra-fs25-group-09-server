@@ -95,7 +95,7 @@ public class LobbyService {
      * @param lobbyUpdatesFromDTO Lobby object containing potential updates (usually mapped from LobbyPutDTO).
      * @throws ResponseStatusException if lobby not found or validation fails.
      */
-    public void updateLobby(Long id, Lobby lobbyUpdatesFromDTO) {
+    public Lobby updateLobby(Long id, Lobby lobbyUpdatesFromDTO) {
         // The 'lobbyUpdatesFromDTO' object is the result of mapping LobbyPutDTO.
         // Fields *not* included in the PUT request body will be null (for Objects)
         // or default values (for primitives like int) after mapping.
@@ -197,7 +197,7 @@ public class LobbyService {
         } else {
             log.info("No effective changes detected for lobby {}. Skipping database save.", id);
         }
-        // Controller returns void (204 No Content), so no return needed.
+        return existingLobby;
     }
 
     // Add a player to a lobby
