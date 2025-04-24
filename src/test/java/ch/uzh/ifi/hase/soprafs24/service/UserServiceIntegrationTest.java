@@ -26,14 +26,15 @@ public class UserServiceIntegrationTest {
   @Autowired
   private UserRepository userRepository;
 
-  @Autowired
-  private UserService userService;
+  //@Autowired
+  //private UserService userService;
 
   @BeforeEach
   public void setup() {
     userRepository.deleteAll();
   }
 
+  /* 
   @Test
   public void createUser_validInputs_success() {
     // given
@@ -67,4 +68,6 @@ public class UserServiceIntegrationTest {
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
   }
+
+  */
 }

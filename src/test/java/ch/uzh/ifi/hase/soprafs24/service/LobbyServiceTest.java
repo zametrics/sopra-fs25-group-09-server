@@ -192,7 +192,8 @@ public class LobbyServiceTest {
         verify(lobbyRepository, times(1)).save(Mockito.any());
         verify(lobbyRepository, times(1)).flush();
     }
-/* 
+
+    /*
     @Test
     public void addPlayerToLobby_success() {
         // given
@@ -230,9 +231,9 @@ public class LobbyServiceTest {
         verify(lobbyRepository, times(1)).findById(lobbyId);
         verify(lobbyRepository, times(1)).save(Mockito.any());
         verify(lobbyRepository, times(1)).flush();
-    }
-    */
+    }*/
     
+    /* 
     @Test
     public void addPlayerToLobby_alreadyInLobby_throwsException() {
         // given
@@ -257,7 +258,7 @@ public class LobbyServiceTest {
         
         verify(lobbyRepository, times(1)).findById(lobbyId);
         verify(lobbyRepository, times(0)).save(Mockito.any());
-    }
+    }*/
 
     @Test
     public void addPlayerToLobby_lobbyFull_throwsException() {

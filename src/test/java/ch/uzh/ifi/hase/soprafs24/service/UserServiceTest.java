@@ -36,7 +36,7 @@ public class UserServiceTest {
     // testUser
     Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);
   }
-/* 
+
   @Test
   public void createUser_validInputs_success() {
     // when -> any object is being save in the userRepository -> return the dummy
@@ -51,8 +51,8 @@ public class UserServiceTest {
     assertNotNull(createdUser.getToken());
     assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
   }
-  */
-/* 
+
+
   @Test
   public void createUser_duplicateInputs_throwsException() {
     // given -> a first user has already been created
@@ -64,7 +64,7 @@ public class UserServiceTest {
     // then -> attempt to create second user with same user -> check that an error
     // is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
-  }*/
+  }
 
   @Test
   public void setUserStatus_validToken_updatesStatus() {
