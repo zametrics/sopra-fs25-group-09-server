@@ -18,8 +18,7 @@ public class ChatGPTService {
     private final String apiUrl = "https://api.openai.com/v1/chat/completions";   //prompts get sent to this endpoint
 
     public ChatGPTService() {
-        this.apiKey = System.getenv("OPENAI_API_KEY");   //load api Key from system env
-        System.out.println("OPENAI_API_KEY: " + this.apiKey);
+        this.apiKey = System.getenv("OPENAI_API_KEY");   //load api Key from system env;
         if(this.apiKey == null || this.apiKey.isEmpty()) {
             throw new IllegalStateException("OpenAI API Key not set");
         }
