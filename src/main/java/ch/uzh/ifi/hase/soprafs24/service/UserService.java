@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.mindrot.jbcrypt.BCrypt; //instead of spring security
-import org.mindrot.jbcrypt.BCrypt;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
@@ -186,8 +185,6 @@ public class UserService {
     if (userByUsername != null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           String.format(baseErrorMessage, "username", "is"));
-    } else if (userByUsername != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
     } 
   }
 
