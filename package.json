@@ -1,9 +1,10 @@
 {
   "name": "sopra-fs25-group-09-server",
   "version": "1.0.0",
-  "description": "## Getting started with Spring Boot -   Documentation: https://docs.spring.io/spring-boot/docs/current/reference/html/index.html -   Guides: http://spring.io/guides     -   Building a RESTful Web Service: http://spring.io/guides/gs/rest-service/     -   Building REST services with Spring: https://spring.io/guides/tutorials/rest/",
+  "description": "## Getting started with Spring Boot ...",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,7 +20,8 @@
   "homepage": "https://github.com/zametrics/sopra-fs25-group-09-server#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.1.0",
+    "express": "^4.21.1",
+    "openai": "^4.67.3",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "ws": "^8.18.1"
