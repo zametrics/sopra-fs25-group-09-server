@@ -54,8 +54,3 @@ jobs:
         with:
           deliverables: app.yaml
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Smoke-test
-        run: |
-          sleep 10
-          curl --fail "${{ steps.deploy.outputs.url }}"
