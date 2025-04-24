@@ -5,6 +5,7 @@ on:
     branches:
       - main
 
+  # run the workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -40,22 +41,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
-        with:
-          credentials_json: '${{ secrets.GCP_SERVICE_CREDENTIALS }}'
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Deploy to App Engine with env var
+      - name: Deploy to App Engine
+        id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
         with:
           deliverables: app.yaml
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
-          env_vars: |
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-
-      - name: Test endpoint (optional)
-        run: curl "${{ steps.deploy.outputs.url }}"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # passed to deployment
