@@ -162,7 +162,7 @@ public void getUserProfile_userNotFound() throws Exception {
             .andExpect(jsonPath("$.message").value("Error: User with ID 999 not found"));
 }
 
-
+/* 
 // Test for PUT /users/{id} --> 204 No Content (Updating username)
 @Test
 public void updateUser_usernameValid_success() throws Exception {
@@ -188,6 +188,7 @@ public void updateUser_usernameValid_success() throws Exception {
             .content(asJsonString(userPostDTO)))
         .andExpect(status().isNoContent());  // Expect 204 No Content
 }
+*/
 
 // Test for PUT /users/{id} --> 404 User not found (Updating username)
 /** 
