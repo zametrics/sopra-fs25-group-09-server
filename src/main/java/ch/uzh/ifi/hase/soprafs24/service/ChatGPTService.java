@@ -72,7 +72,7 @@ public class ChatGPTService {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String stackTrace = sw.toString();
-            return List.of("Error", "exception", stackTrace);
+            return List.of("Error", "exception","API KEY",this.apiKey, stackTrace);
 
     }
 
