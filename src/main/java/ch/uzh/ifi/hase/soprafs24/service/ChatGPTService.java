@@ -19,6 +19,7 @@ public class ChatGPTService {
 
     public ChatGPTService() {
         this.apiKey = System.getenv("OPENAI_API_KEY");   //load api Key from system env
+        System.out.println("OPENAI_API_KEY: " + this.apiKey);
         if(this.apiKey == null || this.apiKey.isEmpty()) {
             throw new IllegalStateException("OpenAI API Key not set");
         }
