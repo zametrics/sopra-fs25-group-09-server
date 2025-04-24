@@ -4,4 +4,4 @@
 runtime: java17
 instance_class: F2
 env_variables:
-  OPENAI_API_KEY: "${OPENAI_API_KEY}"  # Injected from GitHub Secrets via main.yml
+  OPENAI_API_KEY: "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"  # Injected from GitHub Secrets via main.yml
