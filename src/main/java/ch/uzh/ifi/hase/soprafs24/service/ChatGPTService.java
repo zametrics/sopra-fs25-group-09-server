@@ -38,9 +38,13 @@ public class ChatGPTService {
             case "en" -> "english";
             default -> "english";
         };
-        //this is the prompt which will be sent to chat jibity.
-        String prompt = String.format("Give me %d very simple %s nouns in %s. Make sure they vary and avoid using common ones." +
-                "The chances that you already said them should not be high. Return only a JSON array of the words.", count, type, langLabel);
+        
+        String prompt = String.format(
+            "Give me %d very simple %s nouns in %s. Make sure they vary and avoid using common ones. " +
+            "The chances that you already said them should not be high. Return the words as a JSON array, " +
+            "e.g., [\"word1\", \"word2\", \"word3\"], with no additional wrapping object.",
+            count, type, langLabel
+        );
 
         Map<String, Object> requestBody = new HashMap<>();  //this map holds the body of the request
         requestBody.put("model", "gpt-3.5-turbo");
@@ -72,8 +76,9 @@ public class ChatGPTService {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String stackTrace = sw.toString();
-            return List.of("Error", "exception","API KEY",this.apiKey, stackTrace);
 
+            // Activate Return statement for debugging 
+            return List.of("Error", "exception","API KEY",this.apiKey, stackTrace);
     }
 
 }}
