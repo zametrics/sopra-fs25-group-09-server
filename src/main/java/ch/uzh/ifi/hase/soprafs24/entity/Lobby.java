@@ -46,6 +46,8 @@ public class Lobby implements Serializable {
   @Column(nullable = false)
   private String CurrentWord = "default_word";
 
+  @Column(nullable = false)
+  private int status = 0;
 
   // Constructor with random ID generation
   public Lobby() {
@@ -191,5 +193,13 @@ public class Lobby implements Serializable {
     public void setCurrentPainterToken(String currentPainterToken) {
         this.currentPainterToken = currentPainterToken;
     }
+  
+ public int getStatus() {
+  return status;
+ }    
+ 
+ public	void setStatus(int status) {
+  this.status = status;
+ }
 
 }

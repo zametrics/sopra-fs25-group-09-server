@@ -186,10 +186,21 @@ public class LobbyService {
             updated = true;
         }
 
-        // 7. *** IMPORTANT: DO NOT UPDATE playerIds here ***
+        
+        // 7. Update status (if provided and different) 
+        if (existingLobby.getStatus() != (lobbyUpdatesFromDTO.getStatus())) {
+        log.info("Updating Lobby {} Status from '{}' to '{}'", id, existingLobby.getStatus(), lobbyUpdatesFromDTO.getStatus());
+        existingLobby.setStatus(lobbyUpdatesFromDTO.getStatus());
+        updated = true;
+    }
+
+
+        // 8. *** IMPORTANT: DO NOT UPDATE playerIds here ***
         // Player list management MUST happen via join/leave methods.
 
-        // 8. Save to DB only if actual changes were made
+
+
+        // 9. Save to DB only if actual changes were made
         if (updated) {
             lobbyRepository.save(existingLobby);
             lobbyRepository.flush(); // Ensure changes hit the DB

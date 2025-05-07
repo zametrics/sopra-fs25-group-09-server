@@ -12,6 +12,7 @@ public class LobbyPutDTO {
     private Long numOfRounds;
     private int drawTime;
     private String type;
+    private int status;
 
     // Getters and Setters
     public Long getId() {
@@ -76,5 +77,13 @@ public class LobbyPutDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

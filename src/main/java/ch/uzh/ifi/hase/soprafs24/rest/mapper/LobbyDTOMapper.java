@@ -49,5 +49,6 @@ public interface LobbyDTOMapper {
     @Mapping(target = "currentPainterToken", ignore = true)
     @Mapping(target = "painterHistoryTokens", ignore = true)
     @Mapping(target = "currentWord", ignore = true) // Ignore CurrentWord
+    @Mapping(source = "status", target = "status")
     Lobby convertLobbyPutDTOtoEntity(LobbyPutDTO lobbyPutDTO);
 }
