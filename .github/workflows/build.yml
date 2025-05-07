@@ -18,6 +18,10 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu' # Alternative distribution options are available
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+        
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -32,9 +36,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-          
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
