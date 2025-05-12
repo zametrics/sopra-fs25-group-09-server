@@ -68,15 +68,15 @@ public class ChatGPTService {
                         .path("message").path("content")
                         .asText();
 
-                JsonNode contentNode = objectMapper.readTree(content);
-                if (contentNode.isArray() && contentNode.size() > 0) {
-                    return objectMapper.readValue(content, new TypeReference<List<String>>() {});
-                }
+                // parse, remove any duplicates, shuffle, then return
+                List<String> wordsRaw = objectMapper.readValue(content, new TypeReference<List<String>>() {});
+                List<String> unique = new ArrayList<>(new LinkedHashSet<>(wordsRaw));
+                Collections.shuffle(unique);
+                return unique;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
         // Fallback after all retries
         return List.of("apple", "dog", "house");
     }
