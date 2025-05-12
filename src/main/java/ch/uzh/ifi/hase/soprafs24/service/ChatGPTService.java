@@ -46,7 +46,7 @@ public class ChatGPTService {
 
         String prompt = String.format(
                 "Give me %d random, drawable, elementary-level nouns in the category '%s' in %s. " +
-                        "Only return a raw JSON array like [\"word1\",\"word2\",...], nothing else.",
+                        "Only return a raw JSON array like [\"word1\", \"word2\", \"word3\"], with no additional wrapping object.",
                 count, type, langLabel
         );
 
@@ -55,24 +55,30 @@ public class ChatGPTService {
         body.put("messages", List.of(Map.of("role", "user", "content", prompt)));
         body.put("temperature", 0.8);
 
-        try {
-            String rawResponse = webClient.post()
-                    .bodyValue(body)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+        for (int attempt = 0; attempt < 3; attempt++) {
+            try {
+                String rawResponse = webClient.post()
+                        .bodyValue(body)
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
 
-            JsonNode root = objectMapper.readTree(rawResponse);
-            String content = root.path("choices").get(0)
-                    .path("message").path("content")
-                    .asText();
-            return objectMapper.readValue(content, new TypeReference<List<String>>() {});
-        } catch (Exception e) {
-            e.printStackTrace();
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            return List.of("Error fetching pool:", sw.toString());
+                JsonNode root = objectMapper.readTree(rawResponse);
+                String content = root.path("choices").get(0)
+                        .path("message").path("content")
+                        .asText();
+
+                JsonNode contentNode = objectMapper.readTree(content);
+                if (contentNode.isArray() && contentNode.size() > 0) {
+                    return objectMapper.readValue(content, new TypeReference<List<String>>() {});
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
+        // Fallback after all retries
+        return List.of("apple", "dog", "house");
     }
 
     /**
@@ -84,12 +90,16 @@ public class ChatGPTService {
             throw new IllegalArgumentException("sessionId must be provided");
         }
 
-        // composite key so changing lang/type creates a fresh pool
+        // Composite key so changing lang/type creates a fresh pool
         String poolKey = sessionId + "|" + lang + "|" + type;
 
         Deque<String> pool = pools.computeIfAbsent(poolKey,
                 id -> new ArrayDeque<>(fetchWordPool(lang, type, 50))
         );
+
+        if (pool.isEmpty()) {
+            pool.addAll(fetchWordPool(lang, type, 50));
+        }
 
         List<String> out = new ArrayList<>();
         for (int i = 0; i < count && !pool.isEmpty(); i++) {
@@ -97,7 +107,7 @@ public class ChatGPTService {
         }
 
         if (pool.size() < count) {
-            pools.put(poolKey, new ArrayDeque<>(fetchWordPool(lang, type, 50)));
+            pool.addAll(fetchWordPool(lang, type, 50));
         }
 
         return out;
