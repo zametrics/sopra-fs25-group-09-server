@@ -9,11 +9,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,7 +32,8 @@ public class GPTWordControllerTest {
     public void getWords_validInput_returnsWordList() throws Exception {
         // given
         List<String> sampleWords = List.of("apple", "banana", "grape");
-        given(chatGPTService.generateWords("en", "nouns", 3)).willReturn(sampleWords);
+        given(chatGPTService.nextWords(anyString(), eq("en"), eq("nouns"), eq(3)))
+                .willReturn(sampleWords);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/api/words/gpt")
@@ -50,7 +52,7 @@ public class GPTWordControllerTest {
     @Test
     public void getWords_chatGPTFails_returnsFallbackWords() throws Exception {
         // given
-        given(chatGPTService.generateWords("de", "nouns", 3))
+        given(chatGPTService.nextWords(anyString(), eq("de"), eq("nouns"), eq(3)))
                 .willReturn(List.of("Error", "when", "requesting", "words"));
 
         // when
@@ -82,24 +84,20 @@ public class GPTWordControllerTest {
     // Test: Missing API key
     @Test
     public void getWords_missingAPIKey_returnsErrorWords() throws Exception {
-    // given
-    // Mock the service to simulate an API key issue
-    given(chatGPTService.generateWords("en", "nouns", 3))
-            .willReturn(List.of("Error", "when", "requesting", "words"));
+        // given
+        given(chatGPTService.nextWords(anyString(), eq("en"), eq("nouns"), eq(3)))
+                .willReturn(List.of("Error", "when", "requesting", "words"));
 
-    // when
-    MockHttpServletRequestBuilder getRequest = get("/api/words/gpt")
-            .param("lang", "en")
-            .param("type", "nouns")
-            .param("count", "3")
-            .contentType(MediaType.APPLICATION_JSON);
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/api/words/gpt")
+                .param("lang", "en")
+                .param("type", "nouns")
+                .param("count", "3")
+                .contentType(MediaType.APPLICATION_JSON);
 
-    // then
-    mockMvc.perform(getRequest)
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", containsInAnyOrder("Error", "when", "requesting", "words")));
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", containsInAnyOrder("Error", "when", "requesting", "words")));
+    }
 }
-}
-
-
-
