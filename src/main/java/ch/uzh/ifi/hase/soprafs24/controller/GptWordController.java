@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -16,11 +17,14 @@ public class GptWordController {
 
     @GetMapping
     public ResponseEntity<List<String>> getWords(
+            HttpSession session,
             @RequestParam String lang,
             @RequestParam String type,
             @RequestParam(defaultValue = "3") int count
     ) {
-        List <String> words = chatGPTService.generateWords(lang,type,count);
+        // use the container-managed session ID
+        String sessionId = session.getId();
+        List<String> words = chatGPTService.nextWords(sessionId, lang, type, count);
         return ResponseEntity.ok(words);
     }
 }
