@@ -43,7 +43,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Inject secret keys into app.yaml
+      - name: Inject secrets into app.yaml
         run: |
           # Ensure the placeholders in app.yaml are exactly 'OPENAI_API_KEY: ""' and 'GCS_KEY_BASE64: ""'
           # We use '#' as the sed delimiter to avoid conflicts with characters in the secrets.
