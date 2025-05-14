@@ -20,7 +20,7 @@ public class GcsService {
 
     private final Storage storage;
 
-public GcsService() throws IOException {
+    public GcsService() throws IOException {
         String base64Key = System.getenv("GCS_KEY_BASE64");
         if (base64Key == null || base64Key.isEmpty()) {
             throw new IllegalStateException("Environment variable GCS_KEY_BASE64 not set.");
