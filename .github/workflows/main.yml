@@ -45,8 +45,8 @@ jobs:
 
       - name: Inject secret keys into app.yaml
         run: |
-          sed -i "s|OPENAI_API_KEY: ''|OPENAI_API_KEY: '${{ secrets.OPENAI_API_KEY }}'|g" app.yaml
-          sed -i "s|GCS_KEY_BASE64: ''|GCS_KEY_BASE64: '${{ secrets.GCS_KEY_BASE64 }}'|g" app.yaml
+          sed -i "s|OPENAI_API_KEY: \"\"|OPENAI_API_KEY: \"${{ secrets.OPENAI_API_KEY }}\"|g" app.yaml
+          sed -i "s|GCS_KEY_BASE64: \"\"|GCS_KEY_BASE64: \"${{ secrets.GCS_KEY_BASE64 }}\"|g" app.yaml
 
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v0.2.0
