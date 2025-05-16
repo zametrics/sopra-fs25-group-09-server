@@ -1,17 +1,23 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ChatGPTService {
@@ -38,14 +44,14 @@ public class ChatGPTService {
 
     private List<String> fetchWordPool(String lang, String type, int count) {
         String langLabel = switch (lang) {
-            case "de" -> "German";
-            case "ch" -> "Swiss German (echtes Züridütsch)";
+            case "de" -> "German (no pronouns (der/die/das))";
+            case "ch" -> "Swiss German (echtes Züridütsch) (no pronouns (der/die/das))";
             case "en" -> "English";
             default -> "English";
         };
 
         String prompt = String.format(
-                "Give me %d random, drawable, elementary-level nouns in the category '%s' in %s. " +
+                "Give me %d random, drawable, (high-school to college difficulty) nouns in the category '%s' in %s. " +
                         "Only return a raw JSON array like [\"word1\", \"word2\", \"word3\"], with no additional wrapping object.",
                 count, type, langLabel
         );
