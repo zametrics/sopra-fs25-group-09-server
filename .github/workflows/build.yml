@@ -18,6 +18,9 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu' # Alternative distribution options are available
+          
+      - name: Set dummy OpenAI API key for tests
+        run: echo "OPENAI_API_KEY=dummy-key" >> $GITHUB_ENV
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
