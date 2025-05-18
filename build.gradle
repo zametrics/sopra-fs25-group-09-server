@@ -77,8 +77,14 @@ test {
     useJUnitPlatform()
     testLogging.showStandardStreams = true
     maxParallelForks = 1
+
+    // Pass env variable to the JVM so it's available in tests
+    if (System.getenv("OPENAI_API_KEY") != null) {
+        systemProperty "OPENAI_API_KEY", System.getenv("OPENAI_API_KEY")
+    }
 }
 
+// This block should be outside of 'test'
 File secretPropsFile = file('./local.properties')
 if (secretPropsFile.exists()) {
     Properties p = new Properties()
@@ -89,3 +95,4 @@ if (secretPropsFile.exists()) {
 }
 
 defaultTasks 'bootJar', 'build'
+
