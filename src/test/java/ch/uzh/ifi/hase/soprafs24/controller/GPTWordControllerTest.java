@@ -100,4 +100,34 @@ public class GPTWordControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", containsInAnyOrder("Error", "when", "requesting", "words")));
     }
+
+    // test: non-numeric count returns bad request
+    @Test
+    public void getWords_countNotNumeric_returnsBadRequest() throws Exception {
+        MockHttpServletRequestBuilder getRequest = get("/api/words/gpt")
+                .param("lang", "en")
+                .param("type", "nouns")
+                .param("count", "abc")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest)
+                .andExpect(status().isBadRequest());
+    }
+
+    // test: zero count returns empty list
+    @Test
+    public void getWords_zeroCount_returnsEmptyList() throws Exception {
+        given(chatGPTService.nextWords(anyString(), eq("en"), eq("verbs"), eq(0)))
+                .willReturn(List.of());
+
+        MockHttpServletRequestBuilder getRequest = get("/api/words/gpt")
+                .param("lang", "en")
+                .param("type", "verbs")
+                .param("count", "0")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", containsInAnyOrder()));
+    }
 }
