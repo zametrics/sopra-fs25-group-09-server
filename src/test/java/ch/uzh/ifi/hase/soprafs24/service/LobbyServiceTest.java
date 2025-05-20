@@ -67,6 +67,84 @@ public class LobbyServiceTest {
         Mockito.when(lobbyRepository.save(Mockito.any())).thenReturn(testLobby);
     }
 
+@Test
+void createLobby_setsDefaultValuesIfNullOrZero() {
+    Lobby lobby = new Lobby();
+    lobby.setLobbyOwner(1L);
+    lobby.setDrawTime(0); // explicitly zero
+    // rest are null by default
+
+    when(userService.getUserById(1L)).thenReturn(new User());
+    when(lobbyRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+    
+    Lobby result = lobbyService.createLobby(lobby);
+
+    assertEquals(8L, result.getNumOfMaxPlayers());
+    assertEquals("english", result.getLanguage());
+    assertEquals(3L, result.getNumOfRounds());
+    assertEquals(80, result.getDrawTime());
+    assertEquals("anything", result.getType());
+    assertNotNull(result.getPainterHistoryTokens());
+    assertTrue(result.getPainterHistoryTokens().isEmpty());
+}
+
+
+@Test
+void updateLobby_updatesOwnerIfInPlayerList() {
+    Lobby existingLobby = new Lobby();
+    existingLobby.setId(1L);
+    existingLobby.setLobbyOwner(1L);
+    existingLobby.setPlayerIds(new ArrayList<>(List.of(1L, 2L)));
+
+    Lobby updateDto = new Lobby();
+    updateDto.setLobbyOwner(2L); // valid new owner
+
+    when(lobbyRepository.findById(1L)).thenReturn(Optional.of(existingLobby));
+    when(lobbyRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+    Lobby updated = lobbyService.updateLobby(1L, updateDto);
+
+    assertEquals(2L, updated.getLobbyOwner());
+}
+
+@Test
+void updateLobby_throwsWhenMaxPlayersTooHigh() {
+    Lobby existing = new Lobby();
+    existing.setId(1L);
+    existing.setPlayerIds(List.of(1L, 2L)); // 2 players
+    existing.setNumOfMaxPlayers(5L);
+
+    Lobby updateDto = new Lobby();
+    updateDto.setNumOfMaxPlayers(11L); // over limit
+
+    when(lobbyRepository.findById(1L)).thenReturn(Optional.of(existing));
+
+    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+        () -> lobbyService.updateLobby(1L, updateDto));
+
+    assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
+    assertTrue(ex.getReason().contains("cannot exceed 10"));
+}
+
+
+@Test
+void addPlayerToLobby_throwsWhenUserNotFound() {
+    Lobby lobby = new Lobby();
+    lobby.setId(1L);
+    lobby.setNumOfMaxPlayers(5L);
+    lobby.setPlayerIds(new ArrayList<>());
+
+    when(lobbyRepository.findById(1L)).thenReturn(Optional.of(lobby));
+    when(userService.getUserById(99L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+        () -> lobbyService.addPlayerToLobby(1L, 99L));
+
+    assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
+    assertTrue(ex.getReason().contains("Player with ID 99 not found"));
+}
+
+
     @Test
     public void getLobbies_returnsAllLobbies() {
         // given
