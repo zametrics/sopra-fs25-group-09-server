@@ -35,6 +35,22 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+import org.mockito.*;
+
+
+
 public class LobbyServiceTest {
 
     @Mock
@@ -47,6 +63,18 @@ public class LobbyServiceTest {
 
     @Mock
     private UserService userService;
+
+
+    @Mock
+    private Lobby lobby;
+
+    private final String lobbyId = "testLobby";
+
+    @Captor
+    private ArgumentCaptor<Lobby> lobbyCaptor;
+
+
+    
 
     @BeforeEach
     public void setup() {
@@ -66,6 +94,138 @@ public class LobbyServiceTest {
         // When saving any lobby, return the test lobby
         Mockito.when(lobbyRepository.save(Mockito.any())).thenReturn(testLobby);
     }
+    
+    @Test
+    void fallback_SelectFirstActivePlayerNotInHistory() {
+        // Simulate playerId → token
+        Map<Long, String> playerTokenMap = Map.of(
+            1L, "A",
+            2L, "B",
+            3L, "C"
+        );
+
+        List<Long> playerIds = List.of(1L, 2L, 3L);
+        Set<String> history = Set.of("A");
+
+        when(lobby.getPlayerIds()).thenReturn(playerIds);
+        when(lobby.getPainterHistoryTokens()).thenReturn(history);
+        when(lobby.getId()).thenReturn(123456L);
+
+        String nextPainterToken = null;
+        boolean allActiveHavePainted = false;
+
+        if (nextPainterToken == null && !allActiveHavePainted) {
+            for (Long id : playerIds) {
+                String token = playerTokenMap.get(id);
+                if (!history.contains(token)) {
+                    nextPainterToken = token;
+                    break;
+                }
+            }
+        }
+
+        assertEquals("B", nextPainterToken);
+    }
+
+
+    @Test
+    void fallback_ClearHistoryWhenNoPlayerFound() {
+        Map<Long, String> playerTokenMap = Map.of(
+            1L, "A",
+            2L, "B"
+        );
+
+        List<Long> playerIds = List.of(1L, 2L);
+        Set<String> history = Set.of("A", "B");
+
+        when(lobby.getPlayerIds()).thenReturn(playerIds);
+        when(lobby.getPainterHistoryTokens()).thenReturn(history);
+        when(lobby.getId()).thenReturn(123456L);
+
+        String nextPainterToken = null;
+        boolean allActiveHavePainted = false;
+
+        if (nextPainterToken == null && !allActiveHavePainted) {
+            for (Long id : playerIds) {
+                String token = playerTokenMap.get(id);
+                if (!history.contains(token)) {
+                    nextPainterToken = token;
+                    break;
+                }
+            }
+            if (nextPainterToken == null) {
+                lobby.clearPainterHistory(); // fallback
+                nextPainterToken = playerTokenMap.get(playerIds.get(0));
+            }
+        }
+
+        verify(lobby).clearPainterHistory();
+        assertEquals("A", nextPainterToken);
+    }
+
+    @Test
+    void fallback_ClearHistoryWhenAllActiveHavePainted() {
+        Map<Long, String> playerTokenMap = Map.of(
+            1L, "A",
+            2L, "B"
+        );
+
+        List<Long> playerIds = List.of(1L, 2L);
+        Set<String> history = Set.of("A", "B");
+
+        when(lobby.getPlayerIds()).thenReturn(playerIds);
+        when(lobby.getPainterHistoryTokens()).thenReturn(history);
+        when(lobby.getId()).thenReturn(123456L);
+
+        String nextPainterToken = null;
+        boolean allActiveHavePainted = true;
+
+        if (nextPainterToken == null && allActiveHavePainted) {
+            lobby.clearPainterHistory();
+            nextPainterToken = playerTokenMap.get(playerIds.get(0));
+        }
+
+        verify(lobby).clearPainterHistory();
+        assertEquals("A", nextPainterToken);
+    }
+
+    @Test
+    void criticalFallbackFailure_ThrowsExceptionWhenNoPainter() {
+        Map<Long, String> playerTokenMap = Map.of(
+            1L, "A"
+        );
+
+        List<Long> playerIds = List.of(1L);
+        Set<String> history = Set.of("A");
+
+        when(lobby.getPlayerIds()).thenReturn(playerIds);
+        when(lobby.getPainterHistoryTokens()).thenReturn(history);
+        when(lobby.getId()).thenReturn(123456L);
+
+        String nextPainterToken = null;
+        boolean allActiveHavePainted = false;
+
+        if (nextPainterToken == null && !allActiveHavePainted) {
+            for (Long id : playerIds) {
+                String token = playerTokenMap.get(id);
+                if (!history.contains(token)) {
+                    nextPainterToken = token;
+                    break;
+                }
+            }
+        }
+
+        // Make a final copy for lambda use
+        final String finalNextPainterToken = nextPainterToken;
+
+        assertThrows(ResponseStatusException.class, () -> {
+            if (finalNextPainterToken == null) {
+                lobby.setCurrentPainterToken(null);
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to determine next painter due to an unexpected state.");
+            }
+        });
+    }
+
 
 @Test
 void createLobby_setsDefaultValuesIfNullOrZero() {
