@@ -1,9 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
+import lombok.Data;
 import java.util.List;
 
+@Data
 public class LobbyGetDTO {
-
     private Long id;
     private Long lobbyOwner;
     private Long numOfMaxPlayers;
@@ -16,101 +17,4 @@ public class LobbyGetDTO {
     private List<String> painterHistoryTokens;
     private String currentWord; 
     private int status;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getLobbyOwner() {
-        return lobbyOwner;
-    }
-
-    public void setLobbyOwner(Long lobbyOwner) {
-        this.lobbyOwner = lobbyOwner;
-    }
-
-    public Long getNumOfMaxPlayers() {
-        return numOfMaxPlayers;
-    }
-
-    public void setNumOfMaxPlayers(Long numOfMaxPlayers) {
-        this.numOfMaxPlayers = numOfMaxPlayers;
-    }
-
-    public List<Long> getPlayerIds() {
-        return playerIds;
-    }
-
-    public void setPlayerIds(List<Long> playerIds) {
-        this.playerIds = playerIds;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public Long getNumOfRounds() {
-        return numOfRounds;
-    }
-
-    public void setNumOfRounds(Long numOfRounds) {
-        this.numOfRounds = numOfRounds;
-    }
-
-    public int getDrawTime() {
-        return drawTime;
-    }
-
-    public void setDrawTime(int drawTime) {
-        this.drawTime = drawTime;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCurrentPainterToken() {
-        return currentPainterToken;
-    }
-
-    public void setCurrentPainterToken(String currentPainterToken) {
-        this.currentPainterToken = currentPainterToken;
-    }
-
-    public List<String> getPainterHistoryTokens() {
-        return painterHistoryTokens;
-    }
-
-    public void setPainterHistoryTokens(List<String> painterHistoryTokens) {
-        this.painterHistoryTokens = painterHistoryTokens;
-    }
-
-    public String getCurrentWord() {
-        return currentWord;
-    }
-
-    public void setCurrentWord(String currentWord) {
-        this.currentWord = currentWord;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 }
