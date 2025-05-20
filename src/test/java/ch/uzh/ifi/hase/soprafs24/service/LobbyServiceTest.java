@@ -504,5 +504,72 @@ public class LobbyServiceTest {
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
     }
 
+    @Test
+    void createLobby_ownerNull_throwsBadRequest() {
+        Lobby lobby = new Lobby();
+        lobby.setPlayerIds(new ArrayList<>());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> lobbyService.createLobby(lobby));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
+    }
+
+    @Test
+    void createLobby_ownerNotFound_throwsNotFound() {
+        Lobby lobby = new Lobby();
+        lobby.setLobbyOwner(1L);
+
+        when(userService.getUserById(1L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> lobbyService.createLobby(lobby));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
+    }
+
+
+    @Test
+    void createLobby_ownerAddedToPlayerList() {
+        Lobby lobby = new Lobby();
+        lobby.setLobbyOwner(1L);
+        lobby.setPlayerIds(new ArrayList<>());
+
+        when(userService.getUserById(1L)).thenReturn(new User());
+        when(lobbyRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Lobby result = lobbyService.createLobby(lobby);
+        assertTrue(result.getPlayerIds().contains(1L));
+    }
+
+    @Test
+    void updateLobby_newOwnerNotInPlayers_doesNotUpdate() {
+        Lobby lobby = new Lobby();
+        lobby.setId(1L);
+        lobby.setLobbyOwner(1L);
+        lobby.setPlayerIds(List.of(1L));
+
+        Lobby update = new Lobby();
+        update.setLobbyOwner(2L); // not in playerIds
+
+        when(lobbyRepository.findById(1L)).thenReturn(Optional.of(lobby));
+
+        Lobby result = lobbyService.updateLobby(1L, update);
+        assertEquals(1L, result.getLobbyOwner()); // should not update
+    }
+
+    @Test
+    void updateLobby_maxPlayersLessThanCurrent_throwsBadRequest() {
+        Lobby lobby = new Lobby();
+        lobby.setId(1L);
+        lobby.setPlayerIds(List.of(1L, 2L));
+
+        Lobby update = new Lobby();
+        update.setNumOfMaxPlayers(1L); // less than current size
+
+        when(lobbyRepository.findById(1L)).thenReturn(Optional.of(lobby));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> lobbyService.updateLobby(1L, update));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
+    }
+
+
+
 
 }
