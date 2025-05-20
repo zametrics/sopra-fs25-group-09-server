@@ -64,40 +64,7 @@ public class LobbyServiceTest {
         assertEquals(testLobby.getId(), result.get(0).getId());
         verify(lobbyRepository, times(1)).findAll();
     }
-/* 
-    @Test
-    public void createLobby_withDefaultValues_success() {
-        // given
-        Lobby inputLobby = new Lobby();
-        inputLobby.setLobbyOwner(1L);
-        // Note: not setting other fields to test defaults
 
-        Lobby savedLobby = new Lobby();
-        savedLobby.setId(123456L);
-        savedLobby.setLobbyOwner(1L);
-        savedLobby.setNumOfMaxPlayers(8L);
-        savedLobby.setLanguage("english");
-        savedLobby.setNumOfRounds(3L);
-        savedLobby.setDrawTime(80);
-        savedLobby.setType("anything");
-        savedLobby.setPlayerIds(new ArrayList<>());
-
-        given(lobbyRepository.save(Mockito.any())).willReturn(savedLobby);
-
-        // when
-        Lobby createdLobby = lobbyService.createLobby(inputLobby);
-
-        // then
-        assertEquals(8L, createdLobby.getNumOfMaxPlayers());
-        assertEquals("english", createdLobby.getLanguage());
-        assertEquals(3L, createdLobby.getNumOfRounds());
-        assertEquals(80, createdLobby.getDrawTime());
-        assertEquals("anything", createdLobby.getType());
-        assertNotNull(createdLobby.getPlayerIds());
-
-        verify(lobbyRepository, times(1)).save(Mockito.any());
-        verify(lobbyRepository, times(1)).flush();
-    }*/
 
     @Test
     public void createLobby_withoutLobbyOwner_throwsException() {
@@ -193,72 +160,6 @@ public class LobbyServiceTest {
         verify(lobbyRepository, times(1)).flush();
     }
 
-    /*
-    @Test
-    public void addPlayerToLobby_success() {
-        // given
-        Long lobbyId = 123456L;
-        Long playerId = 3L; // New player
-        
-        Lobby existingLobby = new Lobby();
-        existingLobby.setId(lobbyId);
-        existingLobby.setLobbyOwner(1L);
-        existingLobby.setNumOfMaxPlayers(8L);
-        existingLobby.setPlayerIds(Arrays.asList(1L, 2L)); // Already has 2 players
-        existingLobby.setLanguage("english");
-        existingLobby.setNumOfRounds(3L);
-        existingLobby.setDrawTime(80);
-        
-        Lobby updatedLobby = new Lobby();
-        updatedLobby.setId(lobbyId);
-        updatedLobby.setLobbyOwner(1L);
-        updatedLobby.setNumOfMaxPlayers(8L);
-        updatedLobby.setPlayerIds(Arrays.asList(1L, 2L, 3L)); // Now has 3 players
-        updatedLobby.setLanguage("english");
-        updatedLobby.setNumOfRounds(3L);
-        updatedLobby.setDrawTime(80);
-        
-        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.of(existingLobby));
-        given(lobbyRepository.save(Mockito.any())).willReturn(updatedLobby);
-        
-        // when
-        Lobby result = lobbyService.addPlayerToLobby(lobbyId, playerId);
-        
-        // then
-        assertEquals(3, result.getPlayerIds().size());
-        assertTrue(result.getPlayerIds().contains(playerId));
-        
-        verify(lobbyRepository, times(1)).findById(lobbyId);
-        verify(lobbyRepository, times(1)).save(Mockito.any());
-        verify(lobbyRepository, times(1)).flush();
-    }*/
-    
-    /* 
-    @Test
-    public void addPlayerToLobby_alreadyInLobby_throwsException() {
-        // given
-        Long lobbyId = 123456L;
-        Long playerId = 2L; // Player already in lobby
-        
-        Lobby existingLobby = new Lobby();
-        existingLobby.setId(lobbyId);
-        existingLobby.setLobbyOwner(1L);
-        existingLobby.setNumOfMaxPlayers(8L);
-        existingLobby.setPlayerIds(Arrays.asList(1L, 2L)); // Player 2 already exists
-        existingLobby.setLanguage("english");
-        existingLobby.setNumOfRounds(3L);
-        existingLobby.setDrawTime(80);
-        
-        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.of(existingLobby));
-        
-        // when/then
-        assertThrows(ResponseStatusException.class, () -> {
-            lobbyService.addPlayerToLobby(lobbyId, playerId);
-        });
-        
-        verify(lobbyRepository, times(1)).findById(lobbyId);
-        verify(lobbyRepository, times(0)).save(Mockito.any());
-    }*/
 
     @Test
     public void addPlayerToLobby_lobbyFull_throwsException() {
@@ -362,31 +263,124 @@ public class LobbyServiceTest {
         verify(lobbyRepository, times(1)).delete(Mockito.any());
         verify(lobbyRepository, times(0)).save(Mockito.any()); // Should not save when deleting
     }
-    /*
+
     @Test
-    public void removePlayerFromLobby_playerNotInLobby_throwsException() {
-        // given
+    public void addPlayerToLobby_playerAlreadyExists_noDuplicateAdded() {
         Long lobbyId = 123456L;
-        Long playerId = 5L; // Player not in lobby
-        
-        Lobby existingLobby = new Lobby();
-        existingLobby.setId(lobbyId);
-        existingLobby.setLobbyOwner(1L);
-        existingLobby.setNumOfMaxPlayers(8L);
-        existingLobby.setPlayerIds(Arrays.asList(1L, 2L, 3L)); // Player 5 not here
-        existingLobby.setLanguage("english");
-        existingLobby.setNumOfRounds(3L);
-        existingLobby.setDrawTime(80);
-        
-        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.of(existingLobby));
-        
-        // when/then
+        Long playerId = 2L;
+
+        Lobby lobbyWithPlayer = new Lobby();
+        lobbyWithPlayer.setId(lobbyId);
+        lobbyWithPlayer.setLobbyOwner(1L);
+        lobbyWithPlayer.setNumOfMaxPlayers(8L);
+        lobbyWithPlayer.setPlayerIds(new ArrayList<>(Arrays.asList(1L, 2L, 3L)));
+        lobbyWithPlayer.setLanguage("english");
+        lobbyWithPlayer.setNumOfRounds(3L);
+        lobbyWithPlayer.setDrawTime(80);
+
+        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.of(lobbyWithPlayer));
+
+        Lobby result = lobbyService.addPlayerToLobby(lobbyId, playerId);
+
+        assertEquals(3, result.getPlayerIds().size()); // no duplicate added
+        assertTrue(result.getPlayerIds().contains(playerId));
+
+        verify(lobbyRepository, times(1)).findById(lobbyId);
+        verify(lobbyRepository, times(0)).save(Mockito.any());  // Changed to 0
+        verify(lobbyRepository, times(0)).flush();              // Changed to 0
+    }
+
+    @Test
+    public void addPlayerToLobby_nonExistentLobby_throwsException() {
+        Long lobbyId = 9999L;
+        Long playerId = 10L;
+
+        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> {
+            lobbyService.addPlayerToLobby(lobbyId, playerId);
+        });
+
+        verify(lobbyRepository, times(1)).findById(lobbyId);
+        verify(lobbyRepository, times(0)).save(Mockito.any());
+    }
+
+    @Test
+    public void removePlayerFromLobby_nonExistentLobby_throwsException() {
+        Long lobbyId = 9999L;
+        Long playerId = 1L;
+
+        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.empty());
+
         assertThrows(ResponseStatusException.class, () -> {
             lobbyService.removePlayerFromLobby(lobbyId, playerId);
         });
-        
+
         verify(lobbyRepository, times(1)).findById(lobbyId);
         verify(lobbyRepository, times(0)).save(Mockito.any());
         verify(lobbyRepository, times(0)).delete(Mockito.any());
-    }*/
+    }
+
+    @Test
+    public void updateLobby_lobbyDoesNotExist_throwsException() {
+        Long lobbyId = 9999L;
+
+        Lobby updateData = new Lobby();
+        updateData.setNumOfMaxPlayers(6L);
+
+        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> {
+            lobbyService.updateLobby(lobbyId, updateData);
+        });
+
+        verify(lobbyRepository, times(1)).findById(lobbyId);
+        verify(lobbyRepository, times(0)).save(Mockito.any());
+        verify(lobbyRepository, times(0)).flush();
+    }
+
+    @Test
+    public void updateLobby_lobbyNotFound_throwsException() {
+        Long nonExistingId = 999L;
+        given(lobbyRepository.findById(nonExistingId)).willReturn(Optional.empty());
+
+        Lobby updateData = new Lobby();
+        updateData.setLanguage("spanish");
+
+        assertThrows(ResponseStatusException.class, () -> {
+            lobbyService.updateLobby(nonExistingId, updateData);
+        });
+
+        verify(lobbyRepository, times(1)).findById(nonExistingId);
+    }
+
+    @Test
+    public void addPlayerToLobby_lobbyNotFound_throwsException() {
+        Long lobbyId = 999L;
+        Long playerId = 5L;
+
+        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> {
+            lobbyService.addPlayerToLobby(lobbyId, playerId);
+        });
+
+        verify(lobbyRepository, times(1)).findById(lobbyId);
+    }
+
+    @Test
+    public void removePlayerFromLobby_lobbyNotFound_throwsException() {
+        Long lobbyId = 999L;
+        Long playerId = 5L;
+
+        given(lobbyRepository.findById(lobbyId)).willReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> {
+            lobbyService.removePlayerFromLobby(lobbyId, playerId);
+        });
+
+        verify(lobbyRepository, times(1)).findById(lobbyId);
+    }
+
+
 }
