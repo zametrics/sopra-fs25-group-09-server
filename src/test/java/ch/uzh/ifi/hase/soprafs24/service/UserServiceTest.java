@@ -335,12 +335,16 @@ public class UserServiceTest {
         // then flush is invoked once
         verify(userRepository, times(1)).flush();
     }
-
     @Test
     public void updateUsername_nonExistingId_throwsException() {
         // given no user for id
         when(userRepository.findById(5L)).thenReturn(Optional.empty());
-        // when / then updateUsername throws npe
-        assertThrows(NullPointerException.class, () -> userService.updateUsername(5L, "newName"));
+
+        // when / then updateUsername throws ResponseStatusException
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () ->
+            userService.updateUsername(5L, "newName")
+        );
+
     }
+
 }
