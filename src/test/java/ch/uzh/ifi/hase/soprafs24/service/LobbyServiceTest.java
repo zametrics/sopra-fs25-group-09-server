@@ -10,16 +10,30 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.times;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 
 public class LobbyServiceTest {
 
@@ -30,6 +44,9 @@ public class LobbyServiceTest {
     private LobbyService lobbyService;
 
     private Lobby testLobby;
+
+    @Mock
+    private UserService userService;
 
     @BeforeEach
     public void setup() {
@@ -380,6 +397,111 @@ public class LobbyServiceTest {
         });
 
         verify(lobbyRepository, times(1)).findById(lobbyId);
+    }
+
+    @Test
+    public void selectNextPainter_emptyLobby_throwsException() {
+        Long lobbyId = 1L;
+        Lobby emptyLobby = new Lobby();
+        emptyLobby.setId(lobbyId);
+        emptyLobby.setPlayerIds(new ArrayList<>());
+
+        when(lobbyRepository.findById(lobbyId)).thenReturn(Optional.of(emptyLobby));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+            () -> lobbyService.selectNextPainter(lobbyId));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
+        verify(lobbyRepository).save(emptyLobby);
+        verify(lobbyRepository).flush();
+    }
+
+    @Test
+    public void selectNextPainter_noValidTokens_throwsException() {
+        Long lobbyId = 1L;
+        Lobby lobby = new Lobby();
+        lobby.setId(lobbyId);
+        lobby.setPlayerIds(Arrays.asList(10L, 20L));
+
+        when(lobbyRepository.findById(lobbyId)).thenReturn(Optional.of(lobby));
+        when(userService.getUserById(anyLong())).thenThrow(
+            new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+            () -> lobbyService.selectNextPainter(lobbyId));
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
+        verify(lobbyRepository).save(lobby);
+        verify(lobbyRepository).flush();
+    }
+
+    @Test
+    public void selectNextPainter_normalRotation_success() {
+        Long lobbyId = 1L;
+        Lobby lobby = new Lobby();
+        lobby.setId(lobbyId);
+        lobby.setPlayerIds(Arrays.asList(10L, 20L, 30L));
+        lobby.setPainterHistoryTokens(new HashSet<>(List.of("token1")));
+        lobby.setCurrentPainterToken("token1");
+
+        User u2 = new User(); u2.setId(20L); u2.setToken("token2");
+        User u3 = new User(); u3.setId(30L); u3.setToken("token3");
+        User u1 = new User(); u1.setId(10L); u1.setToken("token1");
+
+        when(lobbyRepository.findById(lobbyId)).thenReturn(Optional.of(lobby));
+        when(userService.getUserById(10L)).thenReturn(u1);
+        when(userService.getUserById(20L)).thenReturn(u2);
+        when(userService.getUserById(30L)).thenReturn(u3);
+        when(lobbyRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Lobby result = lobbyService.selectNextPainter(lobbyId);
+
+        assertEquals("token2", result.getCurrentPainterToken());
+        assertTrue(result.getPainterHistoryTokens().contains("token2"));
+        verify(lobbyRepository).save(result);
+        verify(lobbyRepository).flush();
+    }
+
+    @Test
+    public void setLobbyWord_validWord_setsAndSaves() {
+        Long lobbyId = 1L;
+        String word = "apple";
+        Lobby lobby = new Lobby();
+        lobby.setId(lobbyId);
+
+        when(lobbyRepository.findById(lobbyId)).thenReturn(Optional.of(lobby));
+        when(lobbyRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Lobby result = lobbyService.setLobbyWord(lobbyId, word);
+
+        assertEquals("apple", result.getCurrentWord());
+        verify(lobbyRepository).save(result);
+        verify(lobbyRepository).flush();
+    }
+
+    @Test
+    public void setLobbyWord_nullWord_throwsException() {
+        Long lobbyId = 1L;
+        Lobby lobby = new Lobby();
+        lobby.setId(lobbyId);
+
+        when(lobbyRepository.findById(lobbyId)).thenReturn(Optional.of(lobby));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+            () -> lobbyService.setLobbyWord(lobbyId, null));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
+    }
+
+    @Test
+    public void setLobbyWord_blankWord_throwsException() {
+        Long lobbyId = 1L;
+        Lobby lobby = new Lobby();
+        lobby.setId(lobbyId);
+
+        when(lobbyRepository.findById(lobbyId)).thenReturn(Optional.of(lobby));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+            () -> lobbyService.setLobbyWord(lobbyId, "   "));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
     }
 
 
