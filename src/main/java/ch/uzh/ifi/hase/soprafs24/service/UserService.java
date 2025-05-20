@@ -142,9 +142,10 @@ public class UserService {
     }
 
 
-    public User updateUsername(long id , String newUsername) {
-      User user = userRepository.findById(id).orElse(null);
-      
+  public User updateUsername(long id, String newUsername) {
+      User user = userRepository.findById(id)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
       // Check if the username already exists
       if (userRepository.findByUsername(newUsername) != null) {
           throw new IllegalArgumentException("Username is already taken.");
@@ -153,6 +154,7 @@ public class UserService {
       user.setUsername(newUsername);
       return userRepository.save(user);
   }
+
 
 
   public boolean usernameExists(String username) {

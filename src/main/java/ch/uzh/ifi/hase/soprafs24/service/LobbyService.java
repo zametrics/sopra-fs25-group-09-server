@@ -423,10 +423,8 @@ public class LobbyService {
 
     public Lobby setLobbyWord(Long lobbyId, String word) {
         Lobby lobby = getLobbyById(lobbyId);
-        log.debug("Received word for lobby {}: '{}'", lobbyId, word);
     
         if (word == null || word.trim().isEmpty()) {
-            log.warn("Invalid word provided for lobby {}: '{}'", lobbyId, word);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Word cannot be null or empty.");
         }
     
