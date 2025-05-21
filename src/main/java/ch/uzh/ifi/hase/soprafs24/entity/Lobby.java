@@ -40,7 +40,7 @@ public class Lobby implements Serializable {
   @Column(nullable = true)
   private String currentPainterToken;
 
-  @Column(nullable = false)
+  @Column(nullable = false, length = 1000)
   private String painterHistoryTokens = "";
 
   @Column(nullable = false)
