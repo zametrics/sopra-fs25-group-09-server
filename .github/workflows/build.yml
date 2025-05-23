@@ -42,4 +42,5 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GCS_KEY_BASE64: ${{ secrets.GCS_KEY_BASE64 }}
         run: ./gradlew build sonar --info
