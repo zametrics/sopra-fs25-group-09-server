@@ -219,16 +219,15 @@ These improvements are not required to run DrawZone but can help scale and polis
 
 
 ## 🙌 Authors and Acknowledgment
-> Team members and any third-party tools or inspirations you want to mention.
 
 Daniel Toth [@Danino42](https://github.com/Danino42)  
 Ilias Woert [@iliasw15](https://github.com/iliasw15)  
 Nikola Petrovic [@ortakyakuza](https://github.com/ortakyakuza)  
 Richard Uk [@zametrics](https://github.com/zametrics)
 
-Huge thank you to our TA Lucas Timothy Leo Bär
+Thank you to our TA Lucas Timothy Leo Bär
 
 ---
 
 ## 🛡️ License
-The project is under MIT License
+The project is under the [MIT](https://choosealicense.com/licenses/mit/) License
